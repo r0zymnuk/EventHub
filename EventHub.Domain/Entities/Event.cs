@@ -1,13 +1,18 @@
-﻿namespace EventHub.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-public class Event : BaseClass
+namespace EventHub.Domain.Entities;
+
+public class Event : EventBase
 {
-    public string Title { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-
     public ICollection<Category> Categories { get; set; } = new List<Category>();
+    [Column(TypeName = "decimal(18,2)")]
+    public decimal Price { get; set; }
+    public string Address { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public string Country { get; set; } = string.Empty;
 
-    public Location Location { get; set; } = new Location("Ukraine", "Kyiv");
+    public double Latitude { get; set; } = 0;
+    public double Longitude { get; set; } = 0;
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
 }
