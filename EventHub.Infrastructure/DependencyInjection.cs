@@ -15,7 +15,7 @@ public static class DependencyInjection
         //         b => b.MigrationsAssembly(typeof(DatabaseContext).Assembly.FullName));
         // }, ServiceLifetime.Transient);
 
-        services.AddDbContext<DatabaseContext>(options =>{
+        services.AddDbContext<EventHubDbContext>(options =>{
             options.UseSqlServer(connectionString);
         });
 

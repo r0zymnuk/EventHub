@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace EventHub.Infrastructure.DataContext;
-public class DatabaseContext : DbContext
+public class EventHubDbContext : DbContext
 {
-    public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
+    public EventHubDbContext(DbContextOptions<EventHubDbContext> options) : base(options)
     {
         
     }

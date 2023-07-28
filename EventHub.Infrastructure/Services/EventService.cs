@@ -13,10 +13,10 @@ using System.Threading.Tasks;
 namespace EventHub.Infrastructure.Services;
 public class EventService : IEventService
 {
-    private readonly DatabaseContext context;
+    private readonly EventHubDbContext context;
     private readonly IMapper mapper;
 
-    public EventService(DatabaseContext context, IMapper mapper)
+    public EventService(EventHubDbContext context, IMapper mapper)
     {
         this.context = context;
         this.mapper = mapper;
