@@ -1,5 +1,6 @@
 ﻿using EventHub.Application.Services;
 using EventHub.Infrastructure.DataContext;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,9 +16,14 @@ public static class DependencyInjection
         //         b => b.MigrationsAssembly(typeof(DatabaseContext).Assembly.FullName));
         // }, ServiceLifetime.Transient);
 
-        services.AddDbContext<EventHubDbContext>(options =>{
+        services.AddDbContext<ApplicationDbContext>(options =>{
             options.UseSqlServer(connectionString);
         });
+
+        services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultUI()
+            .AddDefaultTokenProviders();
 
         return services;
     }
