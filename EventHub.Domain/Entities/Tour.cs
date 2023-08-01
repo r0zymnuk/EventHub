@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace EventHub.Domain.Entities;
 public class Tour : EventBase
 {
-    public new bool IsTour { get; init; } = true;
     public ICollection<Event> Events { get; set; } = new List<Event>();
+    public ICollection<Category> Categories { get; set; } = new List<Category>();
+    public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
 }
