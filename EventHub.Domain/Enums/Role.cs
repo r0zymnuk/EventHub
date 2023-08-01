@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace EventHub.Domain.Enums;
-public enum Roles
+public enum Role
 {
     User,
     Manager,
     Organizer,
-    Star,
-    Admin
+    Admin,
+    SuperAdmin
 }

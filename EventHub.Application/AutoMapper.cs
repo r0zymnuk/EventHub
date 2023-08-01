@@ -8,10 +8,7 @@ public class AutoMapper : Profile
     public AutoMapper()
     {
         CreateMap<AddEventDto, Event>();
-        CreateMap<Event, GetEventDto>().AfterMap((src, dest) =>
-        {
-            dest.Location = new Location(src.Country, src.City, src.Address, src.Latitude, src.Longitude);
-        });
+        CreateMap<Event, GetEventDto>();
 
         CreateMap<AddTourDto, Tour>();
     }
