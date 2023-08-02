@@ -36,6 +36,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.HasMany(u => u.EnteredEvents);
 
+        builder.HasMany(u => u.Tickets);
+
         builder.HasMany(u => u.OrganizedEvents)
             .WithOne(e => e.Organizer);
 

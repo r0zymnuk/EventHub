@@ -21,10 +21,10 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
             .IsRequired()
             .HasMaxLength(5000);
 
-        builder.Property(e => e.StartDate)
+        builder.Property(e => e.Start)
             .IsRequired();
 
-        builder.Property(e => e.EndDate)
+        builder.Property(e => e.End)
             .IsRequired();
 
         builder.Property(e => e.ImageUrl)
@@ -37,6 +37,11 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
 
         builder.HasMany(e => e.Categories);
 
-        builder.OwnsMany(e => e.Tickets);
+        builder.HasMany(e => e.Tickets);
+
+        builder.Property(e => e.Currency)
+            .IsRequired()
+            .HasMaxLength(3)
+            .HasDefaultValue("USD");
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventHub.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230801132945_InitDb")]
-    partial class InitDb
+    [Migration("20230802165552_UpdateModels")]
+    partial class UpdateModels
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,7 +67,7 @@ namespace EventHub.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("EventHub.Domain.Entities.Event", b =>
@@ -76,17 +76,39 @@ namespace EventHub.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("AgeRestriction")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)")
+                        .HasDefaultValue("USD");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime>("End")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Format")
+                        .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsFree")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPrivate")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsTour")
                         .HasColumnType("bit");
@@ -94,8 +116,20 @@ namespace EventHub.Infrastructure.Migrations
                     b.Property<Guid>("OrganizerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("StartDate")
+                    b.Property<int>("Registered")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RegistrationEnd")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("RegistrationStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -117,6 +151,48 @@ namespace EventHub.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("EventHub.Domain.Entities.Ticket", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(125)
+                        .HasColumnType("nvarchar(125)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("TourId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("TourId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Tickets");
                 });
 
             modelBuilder.Entity("EventHub.Domain.Entities.Tour", b =>
@@ -182,6 +258,9 @@ namespace EventHub.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDisabled")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -212,7 +291,7 @@ namespace EventHub.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int>("RolePass")
+                    b.Property<int>("Role")
                         .HasColumnType("int");
 
                     b.Property<string>("SecurityStamp")
@@ -410,39 +489,6 @@ namespace EventHub.Infrastructure.Migrations
                         .WithMany("EnteredEvents")
                         .HasForeignKey("UserId");
 
-                    b.OwnsMany("EventHub.Domain.ValueObjects.Ticket", "Tickets", b1 =>
-                        {
-                            b1.Property<Guid>("EventId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
-
-                            b1.Property<string>("Description")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<decimal>("Price")
-                                .HasColumnType("decimal(18,2)");
-
-                            b1.Property<int>("Quantity")
-                                .HasColumnType("int");
-
-                            b1.HasKey("EventId", "Id");
-
-                            b1.ToTable("Events_Tickets");
-
-                            b1.WithOwner()
-                                .HasForeignKey("EventId");
-                        });
-
                     b.OwnsOne("EventHub.Domain.ValueObjects.Location", "Location", b1 =>
                         {
                             b1.Property<Guid>("EventId")
@@ -478,8 +524,21 @@ namespace EventHub.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Organizer");
+                });
 
-                    b.Navigation("Tickets");
+            modelBuilder.Entity("EventHub.Domain.Entities.Ticket", b =>
+                {
+                    b.HasOne("EventHub.Domain.Entities.Event", null)
+                        .WithMany("Tickets")
+                        .HasForeignKey("EventId");
+
+                    b.HasOne("EventHub.Domain.Entities.Tour", null)
+                        .WithMany("Tickets")
+                        .HasForeignKey("TourId");
+
+                    b.HasOne("EventHub.Domain.Entities.User", null)
+                        .WithMany("Tickets")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("EventHub.Domain.Entities.Tour", b =>
@@ -490,42 +549,7 @@ namespace EventHub.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("EventHub.Domain.ValueObjects.Ticket", "Tickets", b1 =>
-                        {
-                            b1.Property<Guid>("TourId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
-
-                            b1.Property<string>("Description")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<decimal>("Price")
-                                .HasColumnType("decimal(18,2)");
-
-                            b1.Property<int>("Quantity")
-                                .HasColumnType("int");
-
-                            b1.HasKey("TourId", "Id");
-
-                            b1.ToTable("Tours_Tickets");
-
-                            b1.WithOwner()
-                                .HasForeignKey("TourId");
-                        });
-
                     b.Navigation("Organizer");
-
-                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -587,6 +611,8 @@ namespace EventHub.Infrastructure.Migrations
             modelBuilder.Entity("EventHub.Domain.Entities.Event", b =>
                 {
                     b.Navigation("Categories");
+
+                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("EventHub.Domain.Entities.Tour", b =>
@@ -594,6 +620,8 @@ namespace EventHub.Infrastructure.Migrations
                     b.Navigation("Categories");
 
                     b.Navigation("Events");
+
+                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("EventHub.Domain.Entities.User", b =>
@@ -605,6 +633,8 @@ namespace EventHub.Infrastructure.Migrations
                     b.Navigation("OrganizedEvents");
 
                     b.Navigation("OrganizedTours");
+
+                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }
