@@ -30,5 +30,7 @@ public class TourConfiguration : IEntityTypeConfiguration<Tour>
         builder.HasMany(t => t.Events);
 
         builder.HasMany(t => t.Tickets);
+
+        builder.OwnsMany(t => t.PromoCodes);
     }
 }

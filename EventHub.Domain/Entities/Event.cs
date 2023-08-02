@@ -20,6 +20,8 @@ public class Event : EventBase
     [MaxLength(3)]
     public string Currency { get; set; } = string.Empty;
 
+    public ICollection<Promo> PromoCodes { get; set; } = new List<Promo>();
+
     public DateTime RegistrationStart { get; set; } = DateTime.MinValue;
     public DateTime RegistrationEnd { get; set; } = DateTime.MinValue;
     public DateTime Start { get; set; }

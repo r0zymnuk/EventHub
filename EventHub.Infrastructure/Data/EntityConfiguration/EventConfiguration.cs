@@ -43,5 +43,7 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
             .IsRequired()
             .HasMaxLength(3)
             .HasDefaultValue("USD");
+
+        builder.OwnsMany(e => e.PromoCodes);
     }
 }
