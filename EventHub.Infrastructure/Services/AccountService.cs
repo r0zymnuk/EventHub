@@ -1,38 +1,43 @@
 ﻿using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace EventHub.Infrastructure.Services;
-public class EventService : IEventService
+public class AccountService : IAccountService
 {
     private readonly ApplicationDbContext context;
     private readonly IMapper mapper;
 
-    public EventService(ApplicationDbContext context, IMapper mapper)
+    public AccountService(ApplicationDbContext context, IMapper mapper)
     {
         this.context = context;
         this.mapper = mapper;
     }
 
-    public Task<Event> CreateEventAsync(Event @event)
+    public Task<User> DeleteUserAsync()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Event> DeleteEventAsync(Guid eventId)
+    public Task<User> GetUserAsync()
     {
         throw new NotImplementedException();
     }
 
-    public Task<Event> GetEventAsync(Guid eventId)
+    public Task<User> LoginAsync(string email, string password)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IQueryable<Event>> GetEventsAsync(string? filterString)
+    public Task<User> RegisterAsync(User newUser, string password)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Event> UpdateEventAsync(Guid eventId, Event @event)
+    public Task<User> UpdateUserAsync(User user)
     {
         throw new NotImplementedException();
     }
