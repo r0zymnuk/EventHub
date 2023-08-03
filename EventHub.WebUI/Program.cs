@@ -1,7 +1,21 @@
+using EventHub.Application;
+using EventHub.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddApplication();
+builder.Services.AddInfrastruction(builder.Configuration.GetConnectionString("DefaultConnection")!);
+
+builder.Services.AddControllersWithViews()
+    .AddRazorOptions(options =>
+    {
+        options.ViewLocationFormats.Add("{0}.cshtml");
+        options.ViewLocationFormats.Add("/Views/{0}.cshtml");
+        options.ViewLocationFormats.Add("/Views/Shared/Components/{0}/{1}.cshtml");
+        options.ViewLocationFormats.Add("/Views/Shared/Components/{0}/Default.cshtml");
+
+    });
 
 var app = builder.Build();
 

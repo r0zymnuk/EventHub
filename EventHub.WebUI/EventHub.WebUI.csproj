@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ViewComponents\" />
-    <Folder Include="Views\Components\" />
+    <ProjectReference Include="..\EventHub.Application\EventHub.Application.csproj" />
+    <ProjectReference Include="..\EventHub.Infrastructure\EventHub.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
