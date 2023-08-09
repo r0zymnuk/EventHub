@@ -29,6 +29,16 @@ public class TourConfiguration : IEntityTypeConfiguration<Tour>
 
         builder.HasMany(t => t.Events);
 
-        builder.OwnsMany(t => t.Tickets);
+        builder.HasMany(t => t.Tickets);
+
+        builder.OwnsMany(t => t.PromoCodes)
+            .Property(p => p.Code)
+            .HasMaxLength(10)
+            .IsRequired();
+
+        builder.Property(t => t.CreatedAt)
+            .IsRequired();
+
+        builder.Property(t => t.UpdatedAt);
     }
 }

@@ -25,6 +25,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired()
             .HasMaxLength(50);
 
+        //builder.HasIndex(u => u.Email)
+        //    .IsUnique();
+
         builder.Property(u => u.PhoneNumber)
             .IsRequired()
             .HasMaxLength(15);
@@ -35,6 +38,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasMany(u => u.FavouriteCategories);
 
         builder.HasMany(u => u.EnteredEvents);
+
+        builder.HasMany(u => u.Tickets);
 
         builder.HasMany(u => u.OrganizedEvents)
             .WithOne(e => e.Organizer);

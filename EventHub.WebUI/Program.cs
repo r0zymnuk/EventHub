@@ -1,16 +1,36 @@
+using EventHub.Application;
+using EventHub.Infrastructure;
+using EventHub.Infrastructure.Data;
+using EventHub.Infrastructure.DataContext;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.AddApplication();
+builder.Services.AddInfrastruction(builder.Configuration.GetConnectionString("DefaultConnection")!);
+
+builder.Services.AddControllersWithViews()
+    .AddRazorOptions(options =>
+    {
+        options.ViewLocationFormats.Add("{0}.cshtml");
+        options.ViewLocationFormats.Add("/Views/{0}.cshtml");
+        options.ViewLocationFormats.Add("/Views/Shared/Components/{0}/{1}.cshtml");
+        options.ViewLocationFormats.Add("/Views/Shared/Components/{0}/Default.cshtml");
+
+    });
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+else if (args.Length == 1 && args[0].ToLower() == "seeddata")
+{
+    Seed.SeedData(app);
 }
 
 app.UseHttpsRedirection();
@@ -20,6 +40,8 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapRazorPages();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

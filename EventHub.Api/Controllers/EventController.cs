@@ -14,20 +14,4 @@ public class EventController : ControllerBase
     {
         this.eventService = eventService;
     }
-
-    [HttpGet]
-    public async Task<IActionResult> GetAllEvents()
-    {
-        var events = await eventService.GetAllEventsAsync();
-
-        return Ok(events);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> CreateEvent([FromBody] AddEventDto addEvent)
-    {
-        var newEvent = await eventService.AddEvent(addEvent);
-
-        return CreatedAtAction(nameof(CreateEvent), new { id = newEvent.Id }, newEvent);
-    }
 }

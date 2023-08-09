@@ -1,14 +1,5 @@
 ﻿using AutoMapper;
-using EventHub.Application;
-using EventHub.Application.Dtos.Request;
-using EventHub.Application.Services;
-using EventHub.Infrastructure.DataContext;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EventHub.Infrastructure.Services;
 public class EventService : IEventService
@@ -22,25 +13,68 @@ public class EventService : IEventService
         this.mapper = mapper;
     }
 
-    public async Task<IEnumerable<Event>> GetAllEventsAsync()
-    {
-        return await context.Events.ToListAsync();
-    }
-
-    public Task<IEnumerable<Event>> GetEventsByCategoryAsync(Guid categoryId)
+    public Task<Event> CreateEventAsync(Event @event)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Event> AddEvent(AddEventDto eventToAdd)
+    public Task<Event> DeleteEventAsync(Guid eventId)
     {
-        var mappedEvent = mapper.Map<Event>(eventToAdd);
-        await context.Events.AddAsync(mappedEvent);
-        await context.SaveChangesAsync();
-        return mappedEvent;
+        throw new NotImplementedException();
     }
 
-    public Task DeleteEventAsync(Guid id)
+    public async Task<Event?> GetEventByIdAsync(Guid eventId)
+    {
+        return await context.Events.Include(e => e.Tickets).Include(e => e.Categories).FirstOrDefaultAsync(e => e.Id == eventId);
+    }
+
+    public async Task<IEnumerable<Event>> GetEventsAsync(int take = 12, int skip = 0, string filterString = "")
+    {
+        var events = context.Events
+            .Where(e => e.Start >= DateTime.Now && !e.IsPrivate);
+
+        if (!string.IsNullOrEmpty(filterString))
+        {
+            var filters = filterString.Split('&');
+            foreach (var filter in filters)
+            {
+                if (filter.Contains("category"))
+                {
+                    var category = filter.Split('=')[1];
+                    events = events.Where(e => e.Categories.Any(c => c.Name == category));
+                }
+                if (filter.Contains("location"))
+                {
+                    var location = filter.Split('=')[1];
+                    events = events.Where(e => e.Location.City == location);
+                }
+                if (filter.Contains("format"))
+                {
+                    var format = filter.Split('=')[1];
+                    events = events.Where(e => e.Format.ToString() == format);
+                }
+                if (filter.Contains("status"))
+                {
+                    var status = filter.Split('=')[1];
+                    events = events.Where(e => e.Status.ToString() == status);
+                }
+                if (filter.Contains("isFree"))
+                {
+                    var isFree = filter.Split('=')[1];
+                    events = events.Where(e => e.IsFree.ToString().ToLower() == isFree.ToLower());
+                }
+                if (filter.Contains("isTour"))
+                {
+                    var isTour = filter.Split('=')[1];
+                    events = events.Where(e => e.IsTour.ToString().ToLower() == isTour.ToLower());
+                }
+            }
+        }
+
+        return await events.Skip(skip).Take(take).OrderBy(e => e.CreatedAt).ToListAsync();
+    }
+
+    public Task<Event> UpdateEventAsync(Guid eventId, Event @event)
     {
         throw new NotImplementedException();
     }

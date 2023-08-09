@@ -5,6 +5,7 @@ public class Location
     public string Address { get; set; } = string.Empty;
     public string City { get; set; } = string.Empty;
     public string Country { get; set; } = string.Empty;
+    public string CountryCode { get; set; } = string.Empty;
 
     public double Latitude { get; set; } = 0;
     public double Longitude { get; set; } = 0;
@@ -30,5 +31,10 @@ public class Location
     {
         Latitude = latitude;
         Longitude = longitude;
+    }
+
+    public override string ToString()
+    {
+        return $"{City}, {CountryCode}";
     }
 }
