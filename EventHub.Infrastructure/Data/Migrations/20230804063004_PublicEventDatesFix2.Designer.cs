@@ -4,6 +4,7 @@ using EventHub.Infrastructure.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventHub.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230804063004_PublicEventDatesFix2")]
+    partial class PublicEventDatesFix2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -517,8 +520,7 @@ namespace EventHub.Infrastructure.Migrations
 
                             b1.Property<string>("Code")
                                 .IsRequired()
-                                .HasMaxLength(10)
-                                .HasColumnType("nvarchar(10)");
+                                .HasColumnType("nvarchar(max)");
 
                             b1.Property<decimal>("Discount")
                                 .HasColumnType("decimal(18,2)");
@@ -548,10 +550,6 @@ namespace EventHub.Infrastructure.Migrations
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("Country")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("CountryCode")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
@@ -613,8 +611,7 @@ namespace EventHub.Infrastructure.Migrations
 
                             b1.Property<string>("Code")
                                 .IsRequired()
-                                .HasMaxLength(10)
-                                .HasColumnType("nvarchar(10)");
+                                .HasColumnType("nvarchar(max)");
 
                             b1.Property<decimal>("Discount")
                                 .HasColumnType("decimal(18,2)");

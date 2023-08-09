@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CA1845: Use span-based 'string.Concat'
+dotnet_diagnostic.CA1845.severity = none

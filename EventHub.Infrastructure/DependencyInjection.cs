@@ -1,4 +1,5 @@
 ﻿using EventHub.Application.Services;
+using EventHub.Infrastructure.Data;
 using EventHub.Infrastructure.DataContext;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +11,8 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastruction(this IServiceCollection services, string connectionString)
     {
         services.AddScoped<IEventService, EventService>();
-        // services.AddDbContext<DatabaseContext>(options =>
-        // {
-        //     options.UseSqlServer(connectionString,
-        //         b => b.MigrationsAssembly(typeof(DatabaseContext).Assembly.FullName));
-        // }, ServiceLifetime.Transient);
+        services.AddScoped<ITicketService, TicketService>();
+        services.AddScoped<IAccountService, AccountService>();
 
         services.AddDbContext<ApplicationDbContext>(options =>{
             options.UseSqlServer(connectionString);

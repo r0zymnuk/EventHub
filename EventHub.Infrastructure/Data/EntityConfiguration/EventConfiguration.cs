@@ -44,6 +44,11 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
             .HasMaxLength(3)
             .HasDefaultValue("USD");
 
-        builder.OwnsMany(e => e.PromoCodes);
+        builder.OwnsMany(e => e.PromoCodes).Property(p => p.Code).HasMaxLength(10).IsRequired();
+
+        builder.Property(e => e.CreatedAt)
+            .IsRequired();
+
+        builder.Property(e => e.UpdatedAt);
     }
 }
