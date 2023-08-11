@@ -8,22 +8,16 @@ namespace EventHub.WebUI.ViewComponents;
 public class EventListViewComponent : ViewComponent
 {
     private readonly IEventService _eventService;
-    private readonly IMapper mapper;
 
-    public EventListViewComponent(IEventService eventService, IMapper mapper)
+    public EventListViewComponent(IEventService eventService)
     {
         _eventService = eventService;
-        this.mapper = mapper;
     }
 
-    public async Task<IViewComponentResult> InvokeAsync()
+    public async Task<IViewComponentResult> InvokeAsync(int take = 12, int skip = 0, string filterString = "")
     {
-        var events = await _eventService.GetEventsAsync();
-        List<EventCardModel> eventsModel = new();
-        foreach (var e in events)
-        {
-            eventsModel.Add(EventCardModel.FromEvent(e));
-        }
-        return View(eventsModel);
+        var events = await _eventService
+            .GetEventsAsync(take: take, skip: skip, filterString: filterString);
+        return View(events.ToList());
     }
 }

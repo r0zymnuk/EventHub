@@ -1,12 +1,14 @@
 ﻿using EventHub.Application.Services;
+using EventHub.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace EventHub.WebUI.Controllers;
 
 [Route("event")]
 public class EventController : Controller
 {
-    private IEventService _eventService;
+    private readonly IEventService _eventService;
 
     public EventController(IEventService eventService)
     {
@@ -22,5 +24,11 @@ public class EventController : Controller
             return NotFound($"Event with id {eventId} not found.");
         }
         return View(@event);
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

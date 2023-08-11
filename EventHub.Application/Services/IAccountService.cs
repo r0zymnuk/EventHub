@@ -9,4 +9,5 @@ public interface IAccountService
     Task<User?> GetUserAsync();
     Task<User> UpdateUserAsync(User user);
     Task<User> DeleteUserAsync();
+    Task LogoutAsync();
 }
