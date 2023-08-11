@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EventHub.Domain.Entities;
 public class Ticket
 {
     public Guid Id { get; set; } = Guid.NewGuid();
+    [MaxLength(25, ErrorMessage = "Name cannot be longer than 25 characters.")]
     public string Name { get; set; } = string.Empty;
+    [MaxLength(120, ErrorMessage = "Description cannot be longer than 120 characters.")]
     public string Description { get; set; } = string.Empty;
+    [MaxLength(7, ErrorMessage = "Please put only main features of the ticket.")]
+    public ICollection<Feature> Features { get; set; } = new List<Feature>();
     public int Quantity { get; set; }
+    public int Sold { get; set; }
     [Column(TypeName = "decimal(18,2)")]
     public decimal Price { get; set; }
 }

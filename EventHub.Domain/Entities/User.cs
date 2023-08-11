@@ -8,6 +8,7 @@ public class User : IdentityUser<Guid>
     public string ImageUrl { get; set; } = string.Empty;
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
+    public string FullName => $"{FirstName} {LastName}";
     public Role Role { get; set; } = Role.User;
     public bool IsDisabled { get; set; } = false;
 
