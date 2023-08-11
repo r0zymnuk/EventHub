@@ -1,5 +1,10 @@
 ﻿namespace EventHub.WebUI.Models.User;
 
-public class RegisterUserModel
-{
-}
+public record RegisterUserModel(
+    string FirstName,
+    string LastName,
+    string Email,
+    string? PhoneNumber,
+    string Password,
+    string ReturnUrl = ""
+);

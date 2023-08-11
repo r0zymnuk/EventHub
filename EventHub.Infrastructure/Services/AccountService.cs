@@ -68,7 +68,7 @@ public class AccountService : IAccountService
     {
         var response = new AuthResponse();
 
-        bool isTaken = await context.Users.AnyAsync(u => u.Email == newUser.Email || u.PhoneNumber == newUser.PhoneNumber);
+        bool isTaken = await context.Users.AnyAsync(u => u.Email == newUser.Email || (newUser.PhoneNumber != null && newUser.PhoneNumber.Length > 5 && u.PhoneNumber == newUser.PhoneNumber));
         if (isTaken)
         {
             response.Error = "Email or phone number is already taken";
@@ -78,18 +78,25 @@ public class AccountService : IAccountService
         var user = await userManager.CreateAsync(newUser, password);
         var result = await signInManager.PasswordSignInAsync(newUser, password, true, false);
         
-        if (user.Errors.Any() || !user.Succeeded)
+        if (!user.Succeeded)
         {
-            response.Error = "Something went wrong";
+            response.Error = user.Errors.First().Description;
             return response;
         }
-        else if (!result.Succeeded)
+        if (!result.Succeeded)
         {
             response.Error = "Something went wrong";
             return response;
         }
 
+        response.Result = result;
+
         return response;
+    }
+    
+    public async Task LogoutAsync()
+    {
+        await signInManager.SignOutAsync();
     }
 
     public Task<User> UpdateUserAsync(User user)

@@ -29,12 +29,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         //    .IsUnique();
 
         builder.Property(u => u.PhoneNumber)
-            .IsRequired()
             .HasMaxLength(15);
 
-        builder.Property(u => u.ImageUrl)
-            .IsRequired();
-
+        builder.Property(u => u.ImageUrl);
         builder.HasMany(u => u.FavouriteCategories);
 
         builder.HasMany(u => u.EnteredEvents);

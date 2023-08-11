@@ -18,7 +18,10 @@ public static class DependencyInjection
             options.UseSqlServer(connectionString);
         });
 
-        services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+        services.AddDefaultIdentity<User>(options =>
+            {
+                options.Password.RequireNonAlphanumeric = false;
+            })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultUI()
             .AddDefaultTokenProviders();
