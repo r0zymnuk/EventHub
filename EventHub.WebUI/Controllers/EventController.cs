@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace EventHub.WebUI.Controllers;
 
-[Route("event")]
+[Route("events")]
 public class EventController : Controller
 {
     private readonly IEventService _eventService;
@@ -24,6 +24,13 @@ public class EventController : Controller
             return NotFound($"Event with id {eventId} not found.");
         }
         return View(@event);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> AllEvents([FromQuery] Dictionary<string, string>? filters)
+    {
+        var events = await _eventService.GetEventsAsync(filters);
+        return View(events);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -14,10 +14,10 @@ public class EventListViewComponent : ViewComponent
         _eventService = eventService;
     }
 
-    public async Task<IViewComponentResult> InvokeAsync(int take = 12, int skip = 0, string filterString = "")
+    public async Task<IViewComponentResult> InvokeAsync(int take = 12, int skip = 0, Dictionary<string, string>? filters = null)
     {
         var events = await _eventService
-            .GetEventsAsync(take: take, skip: skip, filterString: filterString);
+            .GetEventsAsync(filters, take, skip);
         return View(events.ToList());
     }
 }

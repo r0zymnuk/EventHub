@@ -1,4 +1,6 @@
-﻿@{
+﻿@using EventHub.Application.Services;
+@inject IEventService _eventService;
+@{
     ViewData["Title"] = "Home Page";
     List<string> heroBackImg = new List<string>()
     {
@@ -8,6 +10,8 @@
     };
     Random rnd = new Random();
     int index = rnd.Next(heroBackImg.Count);
+
+    var events = await _eventService.GetEventsAsync();
 }
 
 <div class="bg-[#111419] container mx-auto pt-[5rem] px-8 sm:px-0">
@@ -268,6 +272,42 @@
 
 
 <h1 class="text-2xl py-8 text-center bg-[#333333] font-extrabold tracking-tight leading-none text-gray-900 md:text-3xl lg:text-4xl dark:text-white"> Newest Events</h1>
-<div class="px-[8rem] mx-auto md:px-[6rem] sm:px-[1rem] py-6 items-center bg-[#333333]">
+@* <div class="px-[8rem] mx-auto md:px-[6rem] sm:px-[1rem] py-6 items-center bg-[#333333]">
     <vc:event-list filter-string="orderBy=newest"></vc:event-list>
+</div>
+ *@
+
+<div class="lg:px-[6rem] sm:px-[1rem] px-[1rem] py-6 items-center-px-4 bg-[#333333]">
+    <div class="grid lg:grid-cols-2 sm:grid-cols-1 gap-4 mb-4">
+        @foreach (var e in events)
+        {
+            <a asp-controller="Event" asp-action="Id" asp-route-eventId="@e.Id" class="flex flex-col sm:flex-row items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 sm:h-36 md:h-48">
+                <img class="object-cover sm:h-full sm:w-56 xs:w-full md:rounded-none md:rounded-l-lg" src="@e.ImageUrl"
+                     alt="">
+                <div class="p-4 leading-normal h-full">
+                    <h5 class="mb-3 text-lg font-bold tracking-tight text-gray-900 dark:text-white">@e.Title</h5>
+                    <span class="flex gap-4 items-center mb-3 font-normal text-gray-700 dark:text-gray-400"
+                          style="text-overflow: ellipsis;">
+                        <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                             viewBox="0 0 17 21">
+                            <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                <path d="M8 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                                <path d="M13.8 12.938h-.01a7 7 0 1 0-11.465.144h-.016l.141.17c.1.128.2.252.3.372L8 20l5.13-6.248c.193-.209.373-.429.54-.66l.13-.154Z" />
+                            </g>
+                        </svg>
+                        @e.Location
+                    </span>
+                    <span class="flex gap-4 items-center font-normal text-gray-700 dark:text-gray-400">
+                        <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                             viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                  stroke-width="1.5"
+                                  d="M5 1v3m5-3v3m5-3v3M1 7h18M5 11h10M2 3h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
+                        </svg>
+                        @e.Start.ToString("dd MMM yyyy")
+                    </span>
+                </div>
+            </a>
+        }
+    </div>
 </div>

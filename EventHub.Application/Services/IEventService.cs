@@ -3,7 +3,7 @@
 namespace EventHub.Application.Services;
 public interface IEventService
 {
-    Task<IEnumerable<EventCardModel>> GetEventsAsync(int take = 12, int skip = 0, string filterString = "");
+    Task<IEnumerable<EventCardModel>> GetEventsAsync(Dictionary<string, string>? filters = null, int take = 12, int skip = 0);
     Task<EventModel?> GetEventByIdAsync(Guid eventId);
     Task<Event> CreateEventAsync(Event @event);
     Task<Event> UpdateEventAsync(Guid eventId, Event @event);
