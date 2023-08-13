@@ -1,5 +1,7 @@
-﻿using EventHub.Application.Services;
+﻿using EventHub.Application.Dtos;
+using EventHub.Application.Services;
 using EventHub.WebUI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -27,7 +29,7 @@ public class EventController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> AllEvents([FromQuery] Dictionary<string, string>? filters)
+    public async Task<IActionResult> AllEvents([FromQuery] EventFilters? filters)
     {
         var events = await _eventService.GetEventsAsync(filters);
         return View(events);

@@ -12,9 +12,9 @@ public class User : IdentityUser<Guid>
     public Role Role { get; set; } = Role.User;
     public bool IsDisabled { get; set; } = false;
 
-    public IEnumerable<Category> FavouriteCategories = new Collection<Category>();
-    public IEnumerable<Event> EnteredEvents = new Collection<Event>();
-    public IEnumerable<Ticket> Tickets = new Collection<Ticket>();
-    public IEnumerable<Event> OrganizedEvents = new Collection<Event>();
-    public IEnumerable<Tour> OrganizedTours = new Collection<Tour>();
+    public ICollection<Category> FavouriteCategories = new Collection<Category>();
+    public ICollection<Event> EnteredEvents = new Collection<Event>();
+    public ICollection<Ticket> Tickets = new Collection<Ticket>();
+    public ICollection<Event> OrganizedEvents = new Collection<Event>();
+    public ICollection<Tour> OrganizedTours = new Collection<Tour>();
 }

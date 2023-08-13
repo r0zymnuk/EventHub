@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
+using EventHub.Application.Dtos.Request.Account;
 using EventHub.Application.Dtos.Response;
+using EventHub.Application.Dtos.Response.Account.User;
 using EventHub.Application.Dtos.Response.Event;
 
 namespace EventHub.Application;
@@ -10,11 +12,12 @@ public class AutoMapper : Profile
         CreateMap<AddEventDto, Event>();
         CreateMap<Event, GetEventDto>();
         CreateMap<Event, EventModel>()
-            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location.ToString()))
-            .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => GetCategoryNames(src.Categories)))
-            .ForMember(dest => dest.Tickets, opt => opt.MapFrom(src => src.Tickets));
+            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location.ToString()));
         CreateMap<Event, EventCardModel>()
             .ConvertUsing(src => CardFromEvent(src));
+
+        CreateMap<RegisterUserModel, User>();
+        CreateMap<User, UserViewModel>();
     }
 
     private static List<string> GetCategoryNames(ICollection<Category> categories)

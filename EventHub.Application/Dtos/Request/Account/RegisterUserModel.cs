@@ -1,4 +1,4 @@
-﻿namespace EventHub.WebUI.Models.User;
+﻿namespace EventHub.Application.Dtos.Request.Account;
 
 public record RegisterUserModel(
     string FirstName,

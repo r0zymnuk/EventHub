@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
+using EventHub.Application.Dtos.Request.Account;
 using EventHub.Application.Dtos.Response.Account;
+using EventHub.Application.Dtos.Response.Account.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EventHub.Infrastructure.Services;
 public class AccountService : IAccountService
@@ -28,17 +25,22 @@ public class AccountService : IAccountService
         this.signInManager = signInManager;
     }
 
-    public async Task<User?> GetUserAsync()
+    public async Task<UserViewModel?> GetUserAsync()
     {
-        return await userManager.GetUserAsync(signInManager.Context.User);
+        var userId = signInManager.UserManager.GetUserId(signInManager.Context.User);
+        var user = await context.Users
+            .Include(u => u.Tickets)
+            .Include(u => u.EnteredEvents)
+            .FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+        return mapper.Map<UserViewModel>(user);
     }
 
-    public async Task<AuthResponse> LoginAsync(string username, string password, bool isPersistent)
+    public async Task<AuthResponse> LoginAsync(LoginUserModel loginUser)
     {
         var response = new AuthResponse();
 
         var user = await context.Users.FirstOrDefaultAsync(
-            u => u.Email == username || u.PhoneNumber == username || u.UserName == username);
+            u => u.Email == loginUser.UserName || u.PhoneNumber == loginUser.UserName || u.UserName == loginUser.UserName);
         if (user == null)
         {
             response.Error = "Bad credentials";
@@ -48,7 +50,7 @@ public class AccountService : IAccountService
         SignInResult result;
         try
         {
-            result = await signInManager.PasswordSignInAsync(user, password, isPersistent, false);
+            result = await signInManager.PasswordSignInAsync(user, loginUser.Password, loginUser.RememberMe, false);
         }
         catch (ArgumentNullException)
         {
@@ -64,19 +66,21 @@ public class AccountService : IAccountService
         return response;
     }
 
-    public async Task<AuthResponse> RegisterAsync(User newUser, string password)
+    public async Task<AuthResponse> RegisterAsync(RegisterUserModel registerUser)
     {
         var response = new AuthResponse();
 
-        bool isTaken = await context.Users.AnyAsync(u => u.Email == newUser.Email || (newUser.PhoneNumber != null && newUser.PhoneNumber.Length > 5 && u.PhoneNumber == newUser.PhoneNumber));
+        bool isTaken = await context.Users.AnyAsync(u => u.Email == registerUser.Email || (registerUser.PhoneNumber != null && registerUser.PhoneNumber.Length > 5 && u.PhoneNumber == registerUser.PhoneNumber));
         if (isTaken)
         {
             response.Error = "Email or phone number is already taken";
             return response;
         }
+        var newUser = mapper.Map<User>(registerUser);
+        newUser.ImageUrl = $"https://ui-avatars.com/api/?name={newUser.FirstName}+{newUser.LastName}&size=256&background=random&color=fff";
 
-        var user = await userManager.CreateAsync(newUser, password);
-        var result = await signInManager.PasswordSignInAsync(newUser, password, true, false);
+        var user = await userManager.CreateAsync(newUser, registerUser.Password);
+        var result = await signInManager.PasswordSignInAsync(newUser, registerUser.Password, true, false);
         
         if (!user.Succeeded)
         {

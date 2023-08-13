@@ -2,14 +2,19 @@ using EventHub.Application;
 using EventHub.Infrastructure;
 using EventHub.Infrastructure.Data;
 using EventHub.Infrastructure.DataContext;
+using EventHub.WebUI.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddApplication();
 builder.Services.AddInfrastruction(builder.Configuration.GetConnectionString("DefaultConnection")!);
+builder.Services.AddScoped<MessageActionFilter>();
 
-builder.Services.AddControllersWithViews()
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(typeof(MessageActionFilter));
+})
     .AddRazorOptions(options =>
     {
         options.ViewLocationFormats.Add("{0}.cshtml");

@@ -1,8 +1,11 @@
-﻿using EventHub.WebUI.Models;
+﻿using EventHub.WebUI.Filters;
+using EventHub.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace EventHub.WebUI.Controllers;
+
+[ServiceFilter(typeof(MessageActionFilter))]
 public class HomeController : Controller
 {
     //private readonly ILogger<HomeController> _logger;

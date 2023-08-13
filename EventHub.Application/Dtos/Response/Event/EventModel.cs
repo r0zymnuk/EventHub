@@ -7,7 +7,7 @@ public record EventModel(
     DateTime Start,
     DateTime End,
     string ImageUrl,
-    List<string> Categories,
+    List<Category> Categories,
     bool IsFree,
     List<Ticket> Tickets,
     Status Status,

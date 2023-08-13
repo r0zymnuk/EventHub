@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EventHub.Application.Dtos;
 using EventHub.Application.Dtos.Response.Event;
 using EventHub.Application.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ public class EventListViewComponent : ViewComponent
         _eventService = eventService;
     }
 
-    public async Task<IViewComponentResult> InvokeAsync(int take = 12, int skip = 0, Dictionary<string, string>? filters = null)
+    public async Task<IViewComponentResult> InvokeAsync(int take = 12, int skip = 0, EventFilters? filters = null)
     {
         var events = await _eventService
             .GetEventsAsync(filters, take, skip);

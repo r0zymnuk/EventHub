@@ -1,7 +1,8 @@
-﻿using EventHub.Application.Services;
+﻿using EventHub.Application.Dtos.Request.Account;
+using EventHub.Application.Services;
 using EventHub.Domain.Entities;
 using EventHub.WebUI.Models;
-using EventHub.WebUI.Models.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Internal;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -16,9 +17,10 @@ public class AccountController : Controller
         this.accountService = accountService;
     }
 
+    [Authorize]
     public async Task<IActionResult> Account()
     {
-        var user = await this.accountService.GetUserAsync();
+        var user = await accountService.GetUserAsync();
         return View(user);
     }
 
@@ -33,7 +35,7 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> Login(LoginUserModel model)
     {
-        var result = await accountService.LoginAsync(model.UserName, model.Password, model.RememberMe);
+        var result = await accountService.LoginAsync(model);
 
         if (result.Result.Succeeded)
         {
@@ -54,16 +56,7 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> Register(RegisterUserModel model)
     {
-        var newUser = new User
-        {
-            FirstName = model.FirstName,
-            LastName = model.LastName,
-            Email = model.Email,
-            PhoneNumber = model.PhoneNumber,
-            UserName = model.Email
-        };
-        
-        var result = await accountService.RegisterAsync(newUser, model.Password);
+        var result = await accountService.RegisterAsync(model);
         
         if (result.Result.Succeeded)
         {
@@ -72,8 +65,9 @@ public class AccountController : Controller
         
         return RedirectToAction("Register", "Account", new { returnUrl = model.ReturnUrl, error = result.Error });
     }
-    
+
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Logout()
     {
         await accountService.LogoutAsync();

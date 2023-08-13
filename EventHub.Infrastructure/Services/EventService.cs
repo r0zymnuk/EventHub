@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using EventHub.Application.Dtos.Response.Event;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using EventHub.Application.Dtos;
 
 namespace EventHub.Infrastructure.Services;
 
@@ -34,76 +36,101 @@ public class EventService : IEventService
         return mapper.Map<EventModel>(@event);
     }
 
-    public async Task<IEnumerable<EventCardModel>> GetEventsAsync(Dictionary<string, string>? filters = null, int take = 12, int skip = 0)
+    public async Task<List<EventCardModel>> GetEventsAsync(EventFilters? filters = null, int take = 12, int skip = 0)
     {
         var events = context.Events
             .Where(e => e.Start >= DateTime.Now && !e.IsPrivate);
 
         if (filters is not null)
         {
-            if (filters.TryGetValue("category", out var category))
+            if (!string.IsNullOrWhiteSpace(filters.Search))
             {
-                events = events.Where(e => e.Categories.Any(c => c.Name == category));
+                events = events.Where(e => e.Title.Contains(filters.Search) || e.Description.Contains(filters.Search));
             }
-            if (filters.TryGetValue("registrationOpen", out var registrationOpen))
+            if (filters.Start is not null)
             {
-                if (registrationOpen.ToLower() == "true")
+                if (filters.End is not null)
                 {
-                    events = events.Where(e => e.RegistrationStart >= DateTime.Now && e.RegistrationEnd < DateTime.Now);
+                    events = events
+                        .Where(e => e.Start >= filters.Start
+                                               && e.End <= filters.End);
+                }
+                else
+                {
+                    events = events
+                        .Where(e => e.Start >= filters.Start);
                 }
             }
-            if (filters.TryGetValue("format", out var format))
+            else
             {
-                events = events.Where(e => e.Format == (Format)Enum.Parse(typeof(Format), format));
-            }
-            if (filters.TryGetValue("country", out var country))
-            {
-                events = events.Where(e => e.Location.Country == country);
-            }
-            if (filters.TryGetValue("city", out var city))
-            {
-                events = events.Where(e => e.Location.City == city);
-            }
-            if (filters.TryGetValue("status", out var status))
-            {
-                events = events.Where(e => e.Status == (Status)Enum.Parse(typeof(Status), status));
-            }
-            if (filters.TryGetValue("isFree", out var isFree))
-            {
-                events = events.Where(e => e.IsFree == bool.Parse(isFree));
-            }
-            if (filters.TryGetValue("isTour", out var isTour))
-            {
-                events = events.Where(e => e.IsTour == bool.Parse(isTour));
-            }
-            if (filters.TryGetValue("orderBy", out var orderBy))
-            {
-                if (filters.TryGetValue("desc", out var desc))
+                if (filters.End is not null)
                 {
-                    if (orderBy.ToLower() == "date")
+                    events = events.Where(e => e.End <= filters.End);
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(filters.Category))
+            {
+                events = events.Where(e => e.Categories.Any(c => c.Name == filters.Category));
+            }
+            if (filters.RegistrationOpen is not null)
+            {
+                if (filters.RegistrationOpen == true)
+                {
+                    events = events.Where(e => e.RegistrationStart >= DateTime.Now && DateTime.Now < e.RegistrationEnd);
+                }
+            }
+            if (filters.Format is not null)
+            {
+                events = events.Where(e => e.Format == filters.Format);
+            }
+            if (!string.IsNullOrWhiteSpace(filters.Country))
+            {
+                events = events.Where(e => e.Location.Country == filters.Country);
+            }
+            if (!string.IsNullOrWhiteSpace(filters.City))
+            {
+                events = events.Where(e => e.Location.City == filters.City);
+            }
+            if (filters.Status is not null)
+            {
+                events = events.Where(e => e.Status == filters.Status);
+            }
+            if (filters.IsFree is not null)
+            {
+                events = events.Where(e => e.IsFree == filters.IsFree);
+            }
+            if (filters.IsTour is not null)
+            {
+                events = events.Where(e => e.IsTour == filters.IsTour);
+            }
+            if (!string.IsNullOrWhiteSpace(filters.OrderBy))
+            {
+                if (filters.Desc is not null)
+                {
+                    if (filters.OrderBy.ToLower() == "date")
                     {
                         events = events.OrderByDescending(e => e.Start);
                     }
-                    if (orderBy.ToLower() == "newest")
+                    if (filters.OrderBy.ToLower() == "newest")
                     {
                         events = events.OrderByDescending(e => e.CreatedAt);
                     }
-                    if (orderBy.ToLower() == "price")
+                    if (filters.OrderBy.ToLower() == "price")
                     {
                         events = events.Include(e => e.Tickets).OrderByDescending(e => e.Tickets.Min(t => t.Price));
                     }
                 }
                 else
                 {
-                    if (orderBy.ToLower() == "date")
+                    if (filters.OrderBy.ToLower() == "date")
                     {
                         events = events.OrderBy(e => e.Start);
                     }
-                    if (orderBy.ToLower() == "newest")
+                    if (filters.OrderBy.ToLower() == "newest")
                     {
                         events = events.OrderBy(e => e.CreatedAt);
                     }
-                    if (orderBy.ToLower() == "price")
+                    if (filters.OrderBy.ToLower() == "price")
                     {
                         events = events.Include(e => e.Tickets).OrderBy(e => e.Tickets.Min(t => t.Price));
                     }
@@ -120,7 +147,7 @@ public class EventService : IEventService
         return eventCards;
     }
 
-public Task<Event> UpdateEventAsync(Guid eventId, Event @event)
+    public Task<Event> UpdateEventAsync(Guid eventId, Event @event)
 {
     throw new NotImplementedException();
 }
