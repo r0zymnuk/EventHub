@@ -1,12 +1,16 @@
-﻿using EventHub.Application.Services;
+﻿using EventHub.Application.Dtos;
+using EventHub.Application.Services;
+using EventHub.WebUI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace EventHub.WebUI.Controllers;
 
-[Route("event")]
+[Route("events")]
 public class EventController : Controller
 {
-    private IEventService _eventService;
+    private readonly IEventService _eventService;
 
     public EventController(IEventService eventService)
     {
@@ -22,5 +26,18 @@ public class EventController : Controller
             return NotFound($"Event with id {eventId} not found.");
         }
         return View(@event);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> AllEvents([FromQuery] EventFilters? filters)
+    {
+        var events = await _eventService.GetEventsAsync(filters);
+        return View(events);
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

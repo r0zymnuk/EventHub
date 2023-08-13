@@ -1,12 +1,15 @@
-﻿using EventHub.Application.Dtos.Response.Account;
+﻿using EventHub.Application.Dtos.Request.Account;
+using EventHub.Application.Dtos.Response.Account;
+using EventHub.Application.Dtos.Response.Account.User;
 using Microsoft.AspNetCore.Identity;
 
 namespace EventHub.Application.Services;
 public interface IAccountService
 {
-    Task<AuthResponse> RegisterAsync(User newUser, string password);
-    Task<AuthResponse> LoginAsync(string email, string password, bool isPersistent);
-    Task<User?> GetUserAsync();
+    Task<AuthResponse> RegisterAsync(RegisterUserModel newUser);
+    Task<AuthResponse> LoginAsync(LoginUserModel loginUser);
+    Task<UserViewModel?> GetUserAsync();
     Task<User> UpdateUserAsync(User user);
     Task<User> DeleteUserAsync();
+    Task LogoutAsync();
 }

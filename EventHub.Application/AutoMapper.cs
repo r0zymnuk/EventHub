@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
+using EventHub.Application.Dtos.Request.Account;
 using EventHub.Application.Dtos.Response;
+using EventHub.Application.Dtos.Response.Account.User;
 using EventHub.Application.Dtos.Response.Event;
 
 namespace EventHub.Application;
@@ -9,17 +11,30 @@ public class AutoMapper : Profile
     {
         CreateMap<AddEventDto, Event>();
         CreateMap<Event, GetEventDto>();
-        CreateMap<Event, EventCardModel>()
-            .ForMember(dest => dest.Title,
-                opt => opt.MapFrom(src => src.Title.Length > 25 ? src.Title.Substring(0, 25) + "..." : src.Title))
-            .ForMember(dest => dest.Description,
-                opt => opt.MapFrom(src =>
-                    src.Description.Length > 100 ? src.Description.Substring(0, 100) + "..." : src.Description))
-            .ForMember(dest => dest.ImageUrl,
-                opt => opt.MapFrom(src =>
-                    string.IsNullOrWhiteSpace(src.ImageUrl)
-                        ? "https://via.placeholder.com/600x400?text=No%20Image"
-                        : src.ImageUrl))
+        CreateMap<Event, EventModel>()
             .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location.ToString()));
+        CreateMap<Event, EventCardModel>()
+            .ConvertUsing(src => CardFromEvent(src));
+
+        CreateMap<RegisterUserModel, User>();
+        CreateMap<User, UserViewModel>();
+    }
+
+    private static List<string> GetCategoryNames(ICollection<Category> categories)
+        => categories.Select(category => category.Name).ToList();
+
+    public static EventCardModel CardFromEvent(Event @event)
+    {
+        var description = @event.Description.Length > 150 ? @event.Description[..150] + "..." : @event.Description;
+        var imageUrl = string.IsNullOrWhiteSpace(@event.ImageUrl) ? "https://via.placeholder.com/600x400?text=No%20Image" : @event.ImageUrl;
+
+        return new EventCardModel(
+            @event.Id,
+            @event.Title,
+            description,
+            imageUrl,
+            @event.Start,
+            @event.Location.ToString()
+        );
     }
 }

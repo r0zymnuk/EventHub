@@ -31,7 +31,7 @@
                 <a asp-controller="Event" asp-action="Id" asp-route-eventId="@e.Id">
                     <h5 class="mb-2 font-bold max-h-[48px] tracking-tight text-gray-900 dark:text-white"  style="display: -webkit-box;-webkit-line-clamp: 2;-webkit-box-orient: vertical;">@e.Title</h5>
                 </a>
-                <p class="mb-3 font-normal text-sm h-[5rem] text-ellipsis text-gray-700 dark:text-gray-400" style="display: -webkit-box;-webkit-line-clamp: 4;-webkit-box-orient: vertical;">@e.Description</p>
+                @* <p class="mb-3 font-normal text-sm h-[5rem] text-ellipsis text-gray-700 dark:text-gray-400" style="display: -webkit-box;-webkit-line-clamp: 4;-webkit-box-orient: vertical;">@e.Description</p> *@
                 <a asp-controller="Event" asp-action="Id" asp-route-eventId="@e.Id" class="inline-flex float-right mb-3 items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     Read more
                     <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">

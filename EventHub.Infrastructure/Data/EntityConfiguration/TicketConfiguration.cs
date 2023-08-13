@@ -15,11 +15,13 @@ public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
 
         builder.Property(t => t.Name)
             .IsRequired()
-            .HasMaxLength(125);
+            .HasMaxLength(25);
 
         builder.Property(t => t.Description)
             .IsRequired()
-            .HasMaxLength(5000);
+            .HasMaxLength(120);
+
+        builder.OwnsMany(t => t.Features);
 
         builder.Property(t => t.Price)
             .IsRequired();

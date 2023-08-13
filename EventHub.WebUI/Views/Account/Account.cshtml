@@ -1,7 +1,213 @@
-﻿@using EventHub.Domain.Entities;
-@model User
+﻿@using EventHub.Application.Dtos.Response.Account.User;
+@model UserViewModel
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    ViewData["Title"] = "Account";
+    
+    var badgeClasses = new List<string>
+    {
+        "bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300",
+        "bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300",
+        "bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300",
+        "bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300",
+        "bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300",
+        "bg-indigo-100 text-indigo-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300",
+        "bg-purple-100 text-purple-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300",
+        "bg-pink-100 text-pink-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-pink-900 dark:text-pink-300",
+    };
+    int badgeIndex = Random.Shared.Next(0, badgeClasses.Count);
+
+    var categories = Model.FavouriteCategories.ToArray();
 }
+
+<div class="mx-auto w-full lg:px-36 max-w-screen-xl p-4 py-6 mt-8 lg:py-8">
+    <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+        <ul class="flex flex-wrap justify-center -mb-px text-sm font-medium text-center" id="myTab"
+            data-tabs-toggle="#myTabContent" role="tablist">
+            <li class="mr-2" role="presentation">
+                <button class="inline-block p-4 border-b-2 rounded-t-lg" id="profile-tab"
+                        data-tabs-target="#profile" type="button" role="tab" aria-controls="profile"
+                        aria-selected="false">
+                    Profile
+                </button>
+            </li>
+            <li class="mr-2" role="presentation">
+                <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                        id="entered-tab" data-tabs-target="#entered" type="button" role="tab"
+                        aria-controls="entered" aria-selected="false">
+                    Entered Events
+                </button>
+            </li>
+            <li class="mr-2" role="presentation">
+                <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                        id="organized-tab" data-tabs-target="#organized" type="button" role="tab"
+                        aria-controls="organized" aria-selected="false">
+                    Organized Events
+                </button>
+            </li>
+            <li class="mr-2" role="presentation">
+                <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                        id="settings-tab" data-tabs-target="#settings" type="button" role="tab"
+                        aria-controls="settings" aria-selected="false">
+                    Settings
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div id="myTabContent">
+        @* Create endpoint and controller to handle account update *@
+        <form method="post"  class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="profile" role="tabpanel"
+             aria-labelledby="profile-tab">
+
+            <div class="mx-auto mb-4 flex flex-col gap-3 items-center rounded-lg shadow md:flex-row max-w-[40rem]">
+                <img class="rounded h-40 mt-1" src="https://placeholder.com/400" alt="Extra large avatar">
+                <div class="w-full">
+                    <div>
+                        <label for="first_name"
+                               class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">
+                            First name
+                        </label>
+                        <input type="text" id="first_name"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                               placeholder="John" value="@Model.FirstName">
+                    </div>
+                    <div>
+                        <label for="last_name"
+                               class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">
+                            Last
+                            name
+                        </label>
+                        <input type="text" id="last_name"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                               placeholder="Doe" value="@Model.LastName">
+                    </div>
+                </div>
+            </div>
+            <div class="mb-6 mx-auto w-full max-w-[40rem]">
+                <label for="email" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">
+                    Email
+                    address
+                </label>
+                <input type="email" id="email"
+                       class="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                       placeholder="john.doe@company.com" value="@Model.Email">
+            </div>
+            <div class="mb-6 mx-auto w-full max-w-[40rem]">
+                <label class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Favourite Categories</label>
+                @for (int i = 0; i < categories.Length; i++)
+                {
+                    <span class="@badgeClasses[badgeIndex] mb-1">@categories[i].Name</span>
+                    badgeIndex++;
+                    if (badgeIndex == badgeClasses.Count)
+                    {
+                        badgeIndex = 0;
+                    }
+                }
+            </div>
+
+            <div class="flex flex-row-reverse mx-auto w-full max-w-[40rem]">
+                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Submit changes</button>
+                <a asp-controller="Account" asp-action="Account" type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Cancel</a>
+            </div>
+
+        </form>
+        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white" id="entered" role="tabpanel"
+             aria-labelledby="entered-tab">
+            <h3 class="mx-auto text-xl font-semibold mb-1 max-w-[40rem]">Entered Events: @Model.EnteredEvents.Count()</h3>
+            @if (Model.EnteredEvents.Count() == 0)
+            {
+                <div class="mx-auto mb-1 max-w-[40rem]">
+                    <p class="text-md font-normal mb-5 text-gray-900 dark:text-white/70">You haven't entered any events yet.</p>
+                    <a asp-controller="Event" asp-action="AllEvents" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Browse events</a>
+                </div>
+            }
+            else
+            {
+                @foreach (var e in Model.EnteredEvents)
+                {
+                    <a asp-controller="Event" asp-action="Id" asp-route-eventId="@e.Id" class="mt-4 max-w-[40rem] mx-auto flex flex-col sm:flex-row items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 sm:h-36 md:h-48">
+                        <img class="object-cover sm:h-full sm:w-56 xs:w-full md:rounded-none md:rounded-l-lg" src="@e.ImageUrl"
+                             alt="">
+                        <div class="p-4 leading-normal h-full">
+                            <span class="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">**Tickets Count**</span>
+                            <h5 class="mb-3 text-lg font-bold tracking-tight text-gray-900 dark:text-white">@e.Title</h5>
+                            <span class="flex gap-4 items-center mb-3 font-normal text-gray-700 dark:text-gray-400"
+                                  style="text-overflow: ellipsis;">
+                                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                     viewBox="0 0 17 21">
+                                    <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                        <path d="M8 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                                        <path d="M13.8 12.938h-.01a7 7 0 1 0-11.465.144h-.016l.141.17c.1.128.2.252.3.372L8 20l5.13-6.248c.193-.209.373-.429.54-.66l.13-.154Z" />
+                                    </g>
+                                </svg>
+                                @e.Location
+                            </span>
+                            <span class="flex gap-4 items-center font-normal text-gray-700 dark:text-gray-400">
+                                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                     viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                          stroke-width="1.5"
+                                          d="M5 1v3m5-3v3m5-3v3M1 7h18M5 11h10M2 3h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
+                                </svg>
+                                @e.Start.ToString("dd MMM yyyy")
+                            </span>
+                        </div>
+                    </a>
+                }
+            }
+        </div>
+        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="settings" role="tabpanel"
+             aria-labelledby="settings-tab">
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                This is some placeholder content the <strong class="font-medium text-gray-800 dark:text-white">
+                    Settings tab's associated
+                    content
+                </strong>. Clicking another tab will toggle the visibility of this one for the next.
+                The tab JavaScript swaps classes to control the content visibility and styling.
+            </p>
+        </div>
+        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="organized" role="tabpanel"
+             aria-labelledby="organized-tab">
+            <h3 class="mx-auto text-xl font-semibold mb-1 max-w-[40rem] text-gray-900 dark:text-white">Organized Events: @Model.OrganizedEvents.Count()</h3>
+            @if (Model.OrganizedEvents.Count() == 0)
+            {
+                <p class="mx-auto text-md max-w-[40rem] text-gray-900 dark:text-white/70">You have not organized any events yet.</p>
+            }
+            else
+            {
+                @foreach (var e in Model.OrganizedEvents)
+                {
+                    <a asp-controller="Event" asp-action="Id" asp-route-eventId="@e.Id" class="flex flex-col sm:flex-row items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 sm:h-36 md:h-48">
+                        <img class="object-cover sm:h-full sm:w-56 xs:w-full md:rounded-none md:rounded-l-lg" src="@e.ImageUrl"
+                             alt="">
+                        <div class="p-4 leading-normal h-full">
+                            <h5 class="mb-3 text-lg font-bold tracking-tight text-gray-900 dark:text-white">@e.Title</h5>
+                            <span class="flex gap-4 items-center mb-3 font-normal text-gray-700 dark:text-gray-400"
+                                  style="text-overflow: ellipsis;">
+                                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                     viewBox="0 0 17 21">
+                                    <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                        <path d="M8 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                                        <path d="M13.8 12.938h-.01a7 7 0 1 0-11.465.144h-.016l.141.17c.1.128.2.252.3.372L8 20l5.13-6.248c.193-.209.373-.429.54-.66l.13-.154Z" />
+                                    </g>
+                                </svg>
+                                @e.Location
+                            </span>
+                            <span class="flex gap-4 items-center font-normal text-gray-700 dark:text-gray-400">
+                                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                     viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                          stroke-width="1.5"
+                                          d="M5 1v3m5-3v3m5-3v3M1 7h18M5 11h10M2 3h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
+                                </svg>
+                                @e.Start.ToString("dd MMM yyyy")
+                            </span>
+                        </div>
+                    </a>
+                }
+            }
+        </div>
+    </div>
+</div>

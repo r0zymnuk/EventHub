@@ -116,8 +116,8 @@ public class Seed
                     Categories = new List<Category> { context.Categories.First(c => c.Name == "Science & Tech") },
                     Tickets = new List<Ticket>
                     {
-                        new Ticket { Name = "General Admission", Price = 50, Quantity = 100 },
-                        new Ticket { Name = "VIP", Price = 100, Quantity = 50 },
+                        new Ticket { Name = "General Admission", Price = 50, Quantity = 100, Features = new List<Feature>() { new Feature() { Name = "Main presentations"}, new Feature() { Name = "Giveaways"} } },
+                        new Ticket { Name = "VIP", Price = 100, Quantity = 50, Features = new List<Feature>() { new Feature() { Name = "Personal meetings"}, new Feature() { Name = "Spicy topic presentations"} } },
                     },
                     Location = GenerateRandomLocation(),
                     Status = Status.Upcoming,
@@ -160,7 +160,7 @@ public class Seed
         return new Location(chance.Address(), chance.City())
         {
             Country = country.Name,
-            CountryCode = country.Alpha3Code,
+            CountryCode = country.Alpha2Code,
             Latitude = chance.Location().Latitude,
             Longitude = chance.Location().Longitude,
         };
