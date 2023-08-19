@@ -39,7 +39,7 @@
                                 <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                             </svg>
                         </div>
-                        <input name="start" type="text" datepicker datepicker-format="dd/mm/yyyy"
+                        <input name="start" type="text" autocomplete="off" datepicker @*datepicker-format="dd/mm/yyyy"*@
                                class="bg-gray-50 border border-gray-300 max-w-[10rem] text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block pl-10 p-2  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                placeholder="Start Date">
                     </div>
@@ -52,7 +52,7 @@
                                 <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                             </svg>
                         </div>
-                        <input name="end" type="text" datepicker datepicker-format="dd/mm/yyyy"
+                        <input name="end" type="text" autocomplete="off" datepicker @*datepicker-format="dd/mm/yyyy"*@
                                class="bg-gray-50 max-w-[10rem] border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block pl-10 p-2  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                placeholder="End date">
                     </div>
@@ -120,7 +120,7 @@
                     </h6>
                     <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault">
                         <li class="flex items-center">
-                            <input id="apple" type="checkbox" value=""
+                            <input id="apple" type="checkbox" name="Format" value="Online"
                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
                             <label for="apple"
                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -128,7 +128,7 @@
                             </label>
                         </li>
                         <li class="flex items-center">
-                            <input id="fitbit" type="checkbox" value=""
+                            <input id="fitbit" type="checkbox" name="Format" value="OnSite"
                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
                             <label for="fitbit"
                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -136,9 +136,9 @@
                             </label>
                         </li>
                         <li class="flex items-center">
-                            <input id="dell" type="checkbox" value=""
+                            <input id="hybrid" type="checkbox" name="Format" value="Hybrid"
                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-                            <label for="dell"
+                            <label for="hybrid"
                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
                                 Hybrid
                             </label>
@@ -150,9 +150,9 @@
                     </h6>
                     <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault">
                         <li class="flex items-center">
-                            <input id="apple" type="checkbox" value=""
+                            <input id="free" type="checkbox" name="IsFree"
                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-                            <label for="apple"
+                            <label for="free"
                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
                                 Has free entry
                             </label>

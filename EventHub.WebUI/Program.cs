@@ -3,13 +3,16 @@ using EventHub.Infrastructure;
 using EventHub.Infrastructure.Data;
 using EventHub.Infrastructure.DataContext;
 using EventHub.WebUI.Filters;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddApplication();
-builder.Services.AddInfrastruction(builder.Configuration.GetConnectionString("DefaultConnection")!);
+builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("DefaultConnection")!);
 builder.Services.AddScoped<MessageActionFilter>();
+
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 builder.Services.AddControllersWithViews(options =>
 {
@@ -22,7 +25,17 @@ builder.Services.AddControllersWithViews(options =>
         options.ViewLocationFormats.Add("/Views/Shared/Components/{0}/{1}.cshtml");
         options.ViewLocationFormats.Add("/Views/Shared/Components/{0}/Default.cshtml");
 
-    });
+    })
+    .AddDataAnnotationsLocalization()
+    .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix);
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { "en", "uk" };
+    options.SetDefaultCulture("en");
+    options.AddSupportedCultures(supportedCultures);
+    options.AddSupportedUICultures(supportedCultures);
+});
 
 var app = builder.Build();
 
@@ -41,8 +54,11 @@ else if (args.Length == 1 && args[0].ToLower() == "seeddata")
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseRequestLocalization();
 app.UseRouting();
 
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

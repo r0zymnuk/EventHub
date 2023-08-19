@@ -1,15 +1,9 @@
 ﻿@using EventHub.Application.Services;
+@using Microsoft.AspNetCore.Mvc.Localization;
 @inject IEventService _eventService;
+@inject IViewLocalizer Localizer;
 @{
     ViewData["Title"] = "Home Page";
-    // List<string> heroBackImg = new List<string>()
-    // {
-    //     "https://images.pexels.com/photos/167491/pexels-photo-167491.jpeg?auto=compress&w=1920",
-    //     "https://images.pexels.com/photos/13857977/pexels-photo-13857977.jpeg?auto=compress&w=1920",
-    //     "https://images.pexels.com/photos/1313814/pexels-photo-1313814.jpeg?auto=compress&w=2000"
-    // };
-    // Random rnd = new Random();
-    // int index = rnd.Next(heroBackImg.Count);
 
     var events = await _eventService.GetEventsAsync(take: 4);
 }
@@ -78,11 +72,11 @@
          style="background: rgb(17,20,25); background: linear-gradient(180deg, rgba(17,20,25,1) 9%, rgba(51,51,51,1) 95%);">
     <div class="py-5 px-4 sm:px-1 mx-auto max-w-screen-xl text-center lg:py-10 z-10 relative">
         <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-5xl dark:text-white">
-            The best place to define your next weekend
+            @Localizer["HeroHeading"]
         </h1>
         <section class="w-full mt-[3rem]">
-            <div class="pt-8 px-4 mx-auto max-w-screen-xl text-center lg:pt-16 z-10 relative">
-                <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-4xl lg:text-5xl dark:text-white">
+            <div class="pt-4 px-4 mx-auto max-w-screen-xl text-center lg:pt-16 z-10 relative">
+                <h1 class="mb-4 text-3xl font-extrabold tracking-tight leading-none text-gray-900 md:text-3xl lg:text-4xl dark:text-white">
                     Find the one that suits you best
                 </h1>
                 <section class="items-center mt-10">
