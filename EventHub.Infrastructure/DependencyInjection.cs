@@ -8,8 +8,13 @@ using Microsoft.Extensions.DependencyInjection;
 namespace EventHub.Infrastructure;
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastruction(this IServiceCollection services, string connectionString)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString)
     {
+        services.AddScoped<IImageService, ImageService>(provider =>
+        {
+            var imageFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+            return new ImageService(imageFolderPath);
+        });
         services.AddScoped<IEventService, EventService>();
         services.AddScoped<ITicketService, TicketService>();
         services.AddScoped<IAccountService, AccountService>();
