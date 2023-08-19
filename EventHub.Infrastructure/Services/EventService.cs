@@ -95,9 +95,9 @@ public class EventService : IEventService
             {
                 events = events.Where(e => e.Status == filters.Status);
             }
-            if (filters.IsFree is not null)
+            if (filters.IsFree is not null && filters.IsFree == true)
             {
-                events = events.Where(e => e.IsFree == filters.IsFree);
+                events = events.Where(e => e.Tickets.Any(t => t.IsFree));
             }
             if (filters.IsTour is not null)
             {

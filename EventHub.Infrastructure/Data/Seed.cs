@@ -1,7 +1,5 @@
-﻿using Castle.Core.Internal;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ChanceNET;
-using System.ComponentModel;
 using Location = EventHub.Domain.ValueObjects.Location;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,7 +46,6 @@ public class Seed
                     Location = GenerateRandomLocation(),
                     Status = Status.Upcoming,
                     Format = Format.OnSite,
-                    IsFree = false,
                     AgeRestriction = 15,
                     Capacity = 1000,
                     Registered = 0,
@@ -69,7 +66,10 @@ public class Seed
                     ImageUrl = "https://th.bing.com/th/id/OIG.1bg8vO6W76xVIi76arS9",
                     Organizer = GenerateRandomUser(),
                     Categories = new List<Category> { context.Categories.First(c => c.Name == "Arts") },
-                    IsFree = true,
+                    Tickets = new List<Ticket>
+                    {
+                        new Ticket { Name = "General Admission", IsFree = true, Quantity = 100 },
+                    },
                     Location = GenerateRandomLocation(),
                     Status = Status.Upcoming,
                     Format = Format.OnSite,
@@ -93,7 +93,6 @@ public class Seed
                     Location = GenerateRandomLocation(),
                     Status = Status.Upcoming,
                     Format = Format.OnSite,
-                    IsFree = false,
                     AgeRestriction = 15,
                     Capacity = 1000,
                     Registered = 0,
@@ -121,7 +120,7 @@ public class Seed
                     },
                     Location = GenerateRandomLocation(),
                     Status = Status.Upcoming,
-                    Format = Format.Combined,
+                    Format = Format.Hybrid,
                     Start = DateTime.UtcNow.AddDays(20),
                     End = DateTime.UtcNow.AddDays(30),
                     Currency = "EUR",

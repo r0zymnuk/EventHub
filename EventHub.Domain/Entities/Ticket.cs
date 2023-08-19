@@ -2,9 +2,8 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EventHub.Domain.Entities;
-public class Ticket
+public class Ticket : BaseEntity
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
     [MaxLength(25, ErrorMessage = "Name cannot be longer than 25 characters.")]
     public string Name { get; set; } = string.Empty;
     [MaxLength(120, ErrorMessage = "Description cannot be longer than 120 characters.")]
@@ -13,6 +12,6 @@ public class Ticket
     public ICollection<Feature> Features { get; set; } = new List<Feature>();
     public int Quantity { get; set; }
     public int Sold { get; set; }
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal Price { get; set; }
+    public decimal Price { get; set; } = 0;
+    public bool IsFree { get; set; } = false;
 }

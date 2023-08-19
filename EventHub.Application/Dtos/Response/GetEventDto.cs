@@ -13,7 +13,7 @@ public class GetEventDto
     public string Description { get; set; }
     public decimal Price { get; set; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    public ICollection<Guid> Categories { get; set; } = new List<Guid>();
+    public List<Guid> Categories { get; set; } = new List<Guid>();
     public Location Location { get; set; } = new Location("Ukraine", "Kyiv");
     public Guid Organizer { get; set; }
     public DateTime StartDate { get; set; }

@@ -3,5 +3,5 @@ public enum Format
 {
     Online,
     OnSite,
-    Combined
+    Hybrid
 }

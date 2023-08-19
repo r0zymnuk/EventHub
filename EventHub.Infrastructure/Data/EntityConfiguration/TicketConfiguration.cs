@@ -23,7 +23,11 @@ public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
 
         builder.OwnsMany(t => t.Features);
 
+        builder.Navigation(t => t.Features)
+            .AutoInclude();
+
         builder.Property(t => t.Price)
+            .HasColumnType("decimal(18,2)")
             .IsRequired();
 
         builder.Property(t => t.Quantity)

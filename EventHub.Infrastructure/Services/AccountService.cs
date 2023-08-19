@@ -78,15 +78,16 @@ public class AccountService : IAccountService
         }
         var newUser = mapper.Map<User>(registerUser);
         newUser.ImageUrl = $"https://ui-avatars.com/api/?name={newUser.FirstName}+{newUser.LastName}&size=256&background=random&color=fff";
+        newUser.UserName = newUser.FirstName + newUser.LastName + new Random().Next(1000, 9999);
 
         var user = await userManager.CreateAsync(newUser, registerUser.Password);
-        var result = await signInManager.PasswordSignInAsync(newUser, registerUser.Password, true, false);
-        
         if (!user.Succeeded)
         {
             response.Error = user.Errors.First().Description;
             return response;
         }
+
+        var result = await signInManager.PasswordSignInAsync(newUser, registerUser.Password, true, false);
         if (!result.Succeeded)
         {
             response.Error = "Something went wrong";

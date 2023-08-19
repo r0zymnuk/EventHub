@@ -31,9 +31,18 @@ public class TourConfiguration : IEntityTypeConfiguration<Tour>
 
         builder.HasMany(t => t.Tickets);
 
-        builder.OwnsMany(t => t.PromoCodes)
+        builder.OwnsMany(e => e.PromoCodes)
             .Property(p => p.Code)
-            .HasMaxLength(10)
+            .IsRequired()
+            .HasMaxLength(10);
+
+        builder.OwnsMany(e => e.PromoCodes)
+            .Property(p => p.Quantity)
+            .IsRequired();
+
+        builder.OwnsMany(e => e.PromoCodes)
+            .Property(p => p.Discount)
+            .HasColumnType("decimal(18,2)")
             .IsRequired();
 
         builder.Property(t => t.CreatedAt)
