@@ -1,5 +1,6 @@
 ﻿using EventHub.Application.Dtos;
 using EventHub.Application.Services;
+using EventHub.Domain.Entities;
 using EventHub.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,20 @@ public class EventController : Controller
     {
         var events = await _eventService.GetEventsAsync(filters);
         return View(events);
+    }
+
+    [Route("create")]
+    [Authorize]
+    public async Task<IActionResult> Create()
+    {
+        if (Request.Method == "POST")
+        {
+            var @event = new Event();
+            await _eventService.CreateEventAsync(@event);
+            return RedirectToAction("AllEvents");
+        }
+
+        return View();
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
