@@ -38,6 +38,8 @@
             document.documentElement.classList.remove('dark')
         }
     </script>
+
+    @await RenderSectionAsync("Head", required: false)
 </head>
 <body class="bg-[#111419]">
     @if (message is not null)
