@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using EventHub.Application.Dtos.Request.Account;
+﻿using EventHub.Application.Dtos.Request.Account;
 using EventHub.Application.Dtos.Response;
 using EventHub.Application.Dtos.Response.Account.User;
 using EventHub.Application.Dtos.Response.Event;

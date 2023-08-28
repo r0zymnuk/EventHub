@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
+using EventHub.Application.Dtos;
 using EventHub.Application.Dtos.Response.Event;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
-using EventHub.Application.Dtos;
 
 namespace EventHub.Infrastructure.Services;
 
@@ -148,7 +147,7 @@ public class EventService : IEventService
     }
 
     public Task<Event> UpdateEventAsync(Guid eventId, Event @event)
-{
-    throw new NotImplementedException();
-}
+    {
+        throw new NotImplementedException();
+    }
 }

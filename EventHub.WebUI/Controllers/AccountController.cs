@@ -1,9 +1,7 @@
 ﻿using EventHub.Application.Dtos.Request.Account;
 using EventHub.Application.Services;
-using EventHub.Domain.Entities;
 using EventHub.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Internal;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Text.Json;
@@ -45,7 +43,7 @@ public class AccountController : Controller
 
         return RedirectToAction("Login", "Account", new { returnUrl = model.ReturnUrl, error = result.Error });
     }
-    
+
     [HttpGet]
     public IActionResult Register(string returnUrl = "", string error = "")
     {
@@ -58,12 +56,12 @@ public class AccountController : Controller
     public async Task<IActionResult> Register(RegisterUserModel model)
     {
         var result = await accountService.RegisterAsync(model);
-        
+
         if (result.Result.Succeeded)
         {
             return Redirect(model.ReturnUrl);
         }
-        
+
         return RedirectToAction("Register", "Account", new { returnUrl = model.ReturnUrl, error = result.Error });
     }
 

@@ -1,6 +1,4 @@
-﻿using EventHub.Domain.Enums;
-
-namespace EventHub.Application.Dtos;
+﻿namespace EventHub.Application.Dtos;
 
 public record EventFilters
 (

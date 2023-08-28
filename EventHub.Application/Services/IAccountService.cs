@@ -1,7 +1,6 @@
 ﻿using EventHub.Application.Dtos.Request.Account;
 using EventHub.Application.Dtos.Response.Account;
 using EventHub.Application.Dtos.Response.Account.User;
-using Microsoft.AspNetCore.Identity;
 
 namespace EventHub.Application.Services;
 public interface IAccountService

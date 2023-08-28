@@ -1,6 +1,4 @@
 ﻿using EventHub.Application.Dtos.Response.Event;
-using EventHub.Domain.Entities;
-using System.Collections.ObjectModel;
 
 namespace EventHub.Application.Dtos.Response.Account.User;
 

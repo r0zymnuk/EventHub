@@ -1,6 +1,4 @@
-﻿using EventHub.Application.Dtos.Request;
-using EventHub.Application.Services;
-using Microsoft.AspNetCore.Http;
+﻿using EventHub.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventHub.Api.Controllers;

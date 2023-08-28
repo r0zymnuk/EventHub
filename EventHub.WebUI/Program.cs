@@ -1,7 +1,6 @@
 using EventHub.Application;
 using EventHub.Infrastructure;
 using EventHub.Infrastructure.Data;
-using EventHub.Infrastructure.DataContext;
 using EventHub.WebUI.Filters;
 using Microsoft.AspNetCore.Mvc.Razor;
 

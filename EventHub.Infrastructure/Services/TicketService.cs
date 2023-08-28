@@ -10,7 +10,7 @@ public class TicketService : ITicketService
     private readonly SignInManager<User> signInManager;
 
     public TicketService(
-        ApplicationDbContext context, 
+        ApplicationDbContext context,
         //IMapper mapper,
         SignInManager<User> signInManager)
     {
@@ -47,7 +47,7 @@ public class TicketService : ITicketService
         var @event = context.Events.Include(e => e.Tickets).FirstOrDefault(e => e.Id == eventId);
         if (@event == null)
             return result with { Message = $"Event with id: '{eventId}' was not found" };
-        
+
         var ticket = @event.Tickets.FirstOrDefault(t => t.Id == ticketId);
         if (ticket == null)
             return result with { Message = $"Ticket with id: '{ticketId}' was not found" };
@@ -65,7 +65,7 @@ public class TicketService : ITicketService
             user.EnteredEvents.Add(@event);
 
         await context.SaveChangesAsync();
-    
+
         return result with { Success = true, Message = "Ticket purchased successfully" };
     }
 
@@ -78,4 +78,4 @@ public class TicketService : ITicketService
     {
         throw new NotImplementedException();
     }
-}   
+}

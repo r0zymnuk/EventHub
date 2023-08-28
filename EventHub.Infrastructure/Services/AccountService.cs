@@ -16,8 +16,8 @@ public class AccountService : IAccountService
 
     public AccountService(
         ApplicationDbContext context,
-        IMapper mapper, 
-        UserManager<User> userManager, 
+        IMapper mapper,
+        UserManager<User> userManager,
         SignInManager<User> signInManager,
         IImageService imageService)
     {
@@ -100,7 +100,7 @@ public class AccountService : IAccountService
 
         return response;
     }
-    
+
     public async Task LogoutAsync()
     {
         await _signInManager.SignOutAsync();

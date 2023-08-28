@@ -17,7 +17,7 @@ public class EventController : Controller
     {
         _eventService = eventService;
     }
-    
+
     [HttpGet("id/{eventId:guid}")]
     public async Task<IActionResult> Id(Guid eventId)
     {
