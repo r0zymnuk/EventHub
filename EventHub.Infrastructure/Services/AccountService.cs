@@ -8,38 +8,41 @@ using Microsoft.EntityFrameworkCore;
 namespace EventHub.Infrastructure.Services;
 public class AccountService : IAccountService
 {
-    private readonly ApplicationDbContext context;
-    private readonly IMapper mapper;
-    private readonly UserManager<User> userManager;
-    private readonly SignInManager<User> signInManager;
+    private readonly ApplicationDbContext _context;
+    private readonly IMapper _mapper;
+    private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
+    private readonly IImageService _imageService;
 
     public AccountService(
         ApplicationDbContext context,
         IMapper mapper, 
         UserManager<User> userManager, 
-        SignInManager<User> signInManager)
+        SignInManager<User> signInManager,
+        IImageService imageService)
     {
-        this.context = context;
-        this.mapper = mapper;
-        this.userManager = userManager;
-        this.signInManager = signInManager;
+        _context = context;
+        _mapper = mapper;
+        _userManager = userManager;
+        _signInManager = signInManager;
+        _imageService = imageService;
     }
 
     public async Task<UserViewModel?> GetUserAsync()
     {
-        var userId = signInManager.UserManager.GetUserId(signInManager.Context.User);
-        var user = await context.Users
+        var userId = _signInManager.UserManager.GetUserId(_signInManager.Context.User);
+        var user = await _context.Users
             .Include(u => u.Tickets)
             .Include(u => u.EnteredEvents)
             .FirstOrDefaultAsync(u => u.Id.ToString() == userId);
-        return mapper.Map<UserViewModel>(user);
+        return _mapper.Map<UserViewModel>(user);
     }
 
     public async Task<AuthResponse> LoginAsync(LoginUserModel loginUser)
     {
         var response = new AuthResponse();
 
-        var user = await context.Users.FirstOrDefaultAsync(
+        var user = await _context.Users.FirstOrDefaultAsync(
             u => u.Email == loginUser.UserName || u.PhoneNumber == loginUser.UserName || u.UserName == loginUser.UserName);
         if (user == null)
         {
@@ -50,7 +53,7 @@ public class AccountService : IAccountService
         SignInResult result;
         try
         {
-            result = await signInManager.PasswordSignInAsync(user, loginUser.Password, loginUser.RememberMe, false);
+            result = await _signInManager.PasswordSignInAsync(user, loginUser.Password, loginUser.RememberMe, false);
         }
         catch (ArgumentNullException)
         {
@@ -70,24 +73,23 @@ public class AccountService : IAccountService
     {
         var response = new AuthResponse();
 
-        bool isTaken = await context.Users.AnyAsync(u => u.Email == registerUser.Email || (registerUser.PhoneNumber != null && registerUser.PhoneNumber.Length > 5 && u.PhoneNumber == registerUser.PhoneNumber));
+        bool isTaken = await _context.Users.AnyAsync(u => u.Email == registerUser.Email || (registerUser.PhoneNumber != null && registerUser.PhoneNumber.Length > 5 && u.PhoneNumber == registerUser.PhoneNumber));
         if (isTaken)
         {
             response.Error = "Email or phone number is already taken";
             return response;
         }
-        var newUser = mapper.Map<User>(registerUser);
-        newUser.ImageUrl = $"https://ui-avatars.com/api/?name={newUser.FirstName}+{newUser.LastName}&size=256&background=random&color=fff";
+        var newUser = _mapper.Map<User>(registerUser);
         newUser.UserName = newUser.FirstName + newUser.LastName + new Random().Next(1000, 9999);
 
-        var user = await userManager.CreateAsync(newUser, registerUser.Password);
+        var user = await _userManager.CreateAsync(newUser, registerUser.Password);
         if (!user.Succeeded)
         {
             response.Error = user.Errors.First().Description;
             return response;
         }
 
-        var result = await signInManager.PasswordSignInAsync(newUser, registerUser.Password, true, false);
+        var result = await _signInManager.PasswordSignInAsync(newUser, registerUser.Password, true, false);
         if (!result.Succeeded)
         {
             response.Error = "Something went wrong";
@@ -101,17 +103,49 @@ public class AccountService : IAccountService
     
     public async Task LogoutAsync()
     {
-        await signInManager.SignOutAsync();
+        await _signInManager.SignOutAsync();
     }
 
-    public Task<User> UpdateUserAsync(User user)
+    public async Task<User> UpdateUserAsync(UpdateUserModel update)
     {
-        var userToUpdate = context.Users.FirstOrDefault(u => u.Id == user.Id)
-            ?? throw new ArgumentException("User not found");
+        var userId = _signInManager.UserManager.GetUserId(_signInManager.Context.User);
+        var userToUpdate = await _context.Users.FindAsync(Guid.Parse(userId!));
+        if (userToUpdate == null)
+        {
+            return null!;
+        }
 
-        // check which properties are changed and update them
+        if (update is null)
+        {
+            return userToUpdate;
+        }
 
-        throw new NotImplementedException();
+        if (!string.IsNullOrWhiteSpace(update.FirstName))
+        {
+            userToUpdate.FirstName = update.FirstName;
+        }
+        if (!string.IsNullOrWhiteSpace(update.LastName))
+        {
+            userToUpdate.LastName = update.LastName;
+        }
+        if (!string.IsNullOrWhiteSpace(update.Email))
+        {
+            userToUpdate.Email = update.Email;
+        }
+        if (!string.IsNullOrWhiteSpace(update.PhoneNumber))
+        {
+            userToUpdate.PhoneNumber = update.PhoneNumber;
+        }
+        if (!string.IsNullOrWhiteSpace(update.ImageUrl))
+        {
+            if (!string.IsNullOrWhiteSpace(userToUpdate.ImageUrl))
+                await _imageService.DeleteImageAsync(userToUpdate.ImageUrl);
+            userToUpdate.ImageUrl = update.ImageUrl;
+        }
+
+        await _context.SaveChangesAsync();
+
+        return userToUpdate;
     }
 
     public Task<User> DeleteUserAsync()

@@ -9,7 +9,7 @@ public interface IAccountService
     Task<AuthResponse> RegisterAsync(RegisterUserModel newUser);
     Task<AuthResponse> LoginAsync(LoginUserModel loginUser);
     Task<UserViewModel?> GetUserAsync();
-    Task<User> UpdateUserAsync(User user);
+    Task<User> UpdateUserAsync(UpdateUserModel user);
     Task<User> DeleteUserAsync();
     Task LogoutAsync();
 }

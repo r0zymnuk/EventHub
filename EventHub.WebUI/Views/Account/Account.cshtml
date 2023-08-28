@@ -21,6 +21,50 @@
 
     var categories = Model.FavouriteCategories.ToArray();
 }
+<!-- Update image modal -->
+<div id="updateImage" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative w-full max-w-2xl max-h-full">
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <!-- Modal header -->
+            <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    Update User Image
+                </h3>
+                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="updateImage">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <div class="p-6 space-y-6">
+                <div id="dropzone-div" class="flex items-center justify-center w-full">
+                    <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+                        </div>
+                        <input id="dropzone-file" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <img class="h-full mx-auto mt-0 rounded object-cover object-center hidden" id="uploadedImage" alt="Uploaded Image">
+            </div>
+            <!-- Modal footer -->
+            <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+                <form asp-action="UpdateAccount" asp-controller="Account" method="post">
+                    <input id="updateImageName" type="hidden" name="imageUrl" />
+                    <button type="submit" data-modal-hide="updateImage" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Update</button>
+                </form>
+                <button type="button" id="deleteImage" data-modal-hide="updateImage" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="mx-auto w-full lg:px-36 max-w-screen-xl p-4 py-6 mt-8 lg:py-8">
     <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
@@ -62,26 +106,34 @@
              aria-labelledby="profile-tab">
 
             <div class="mx-auto mb-4 flex flex-col gap-3 items-center rounded-lg shadow md:flex-row max-w-[40rem]">
-                <img class="rounded h-40 mt-1" src="@Model.ImageUrl" alt="Extra large avatar">
+                
+                <div class="relative w-[13.5rem] rounded overflow-hidden">
+                    <img class="rounded h-[10rem] object-cover m-0" src="@(!string.IsNullOrWhiteSpace(Model.ImageUrl) ? Url.ActionLink("GetImage", "Image", new { imageName = Model.ImageUrl}) : $"https://ui-avatars.com/api/?name={Model.FirstName}+{Model.LastName}&size=256&background=random&color=fff")" alt="@Model.FirstName @Model.LastName profile picture">
+                    <button data-modal-target="updateImage" data-modal-toggle="updateImage" type="button" class="absolute w-full h-full left-0 top-0 flex justify-center items-center bg-gray-500/50 opacity-0 hover:opacity-100">
+                        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="m13.835 7.578-.005.007-7.137 7.137 2.139 2.138 7.143-7.142-2.14-2.14Zm-10.696 3.59 2.139 2.14 7.138-7.137.007-.005-2.141-2.141-7.143 7.143Zm1.433 4.261L2 12.852.051 18.684a1 1 0 0 0 1.265 1.264L7.147 18l-2.575-2.571Zm14.249-14.25a4.03 4.03 0 0 0-5.693 0L11.7 2.611 17.389 8.3l1.432-1.432a4.029 4.029 0 0 0 0-5.689Z" />
+                        </svg>
+                    </button>
+                    
+                </div>
                 <div class="w-full">
                     <div>
                         <label for="first_name"
                                class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">
                             First name
                         </label>
-                        <input type="text" id="first_name"
+                        <input type="text" id="first_name" name="FirstName"
                                class="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                               placeholder="John" value="@Model.FirstName">
+                               placeholder="First Name" value="@Model.FirstName">
                     </div>
                     <div>
                         <label for="last_name"
                                class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">
-                            Last
-                            name
+                            Last name
                         </label>
-                        <input type="text" id="last_name"
+                        <input type="text" id="last_name" name="LastName"
                                class="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                               placeholder="Doe" value="@Model.LastName">
+                               placeholder="Last Name" value="@Model.LastName">
                     </div>
                 </div>
             </div>
@@ -173,7 +225,11 @@
             <h3 class="mx-auto text-xl font-semibold mb-1 max-w-[40rem] text-gray-900 dark:text-white">Organized Events: @Model.OrganizedEvents.Count()</h3>
             @if (Model.OrganizedEvents.Count() == 0)
             {
-                <p class="mx-auto text-md max-w-[40rem] text-gray-900 dark:text-white/70">You have not organized any events yet.</p>
+                
+                <div class="mx-auto mb-1 max-w-[40rem]">
+                    <p class="text-md font-normal text-gray-900 dark:text-white/70 mb-5">You have not organized any events yet.</p>
+                    <a asp-controller="Event" asp-action="Create" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Create new Event</a>
+                </div>
             }
             else
             {
@@ -211,3 +267,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/dropzone.js"></script>
+}
