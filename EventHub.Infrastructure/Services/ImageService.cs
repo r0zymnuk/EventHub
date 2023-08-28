@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace EventHub.Infrastructure.Services;
 public class ImageService : IImageService
@@ -17,7 +18,12 @@ public class ImageService : IImageService
 
     public async Task<string> UploadImageAsync(IFormFile imageFile)
     {
-        string fileName = Path.GetFileName(imageFile.FileName);
+        if (imageFile == null || imageFile.Length == 0)
+        {
+            return null!;
+        }
+
+        string fileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
         string imagePath = Path.Combine(_imageFolderPath, fileName);
 
         using (var stream = new FileStream(imagePath, FileMode.Create))
@@ -28,9 +34,20 @@ public class ImageService : IImageService
         return fileName;
     }
 
-    public async Task<byte[]> GetImageAsync(string imagePath)
+    public async Task<byte[]> GetImageAsync(string imageName)
     {
-        imagePath = Path.Combine(_imageFolderPath, imagePath);
-        return await File.ReadAllBytesAsync(imagePath);
+        imageName = Path.Combine(_imageFolderPath, imageName);
+        return await File.ReadAllBytesAsync(imageName);
+    }
+
+    public async Task<bool> DeleteImageAsync(string imageName)
+    {
+        imageName = Path.Combine(_imageFolderPath, imageName);
+        if (File.Exists(imageName))
+        {
+            await Task.Run(() => File.Delete(imageName));
+            return true;
+        }
+        return false;
     }
 }

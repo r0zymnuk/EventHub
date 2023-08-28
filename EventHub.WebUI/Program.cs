@@ -9,7 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("DefaultConnection")!);
+builder.Services.AddInfrastructure(
+    builder.Configuration.GetConnectionString("DefaultConnection")!,
+    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "users"));
 builder.Services.AddScoped<MessageActionFilter>();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
