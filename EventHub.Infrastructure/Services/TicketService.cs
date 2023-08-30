@@ -5,18 +5,18 @@ using Microsoft.EntityFrameworkCore;
 namespace EventHub.Infrastructure.Services;
 public class TicketService : ITicketService
 {
-    private readonly ApplicationDbContext context;
-    //private readonly IMapper mapper;
-    private readonly SignInManager<User> signInManager;
+    private readonly ApplicationDbContext _context;
 
+    private readonly IAccountService _accountService;
+
+    //private readonly IMapper mapper;
     public TicketService(
         ApplicationDbContext context,
         //IMapper mapper,
-        SignInManager<User> signInManager)
+        IAccountService accountService)
     {
-        this.context = context;
-        //this.mapper = mapper;
-        this.signInManager = signInManager;
+        _context = context;
+        _accountService = accountService;        
     }
 
     public Task<Event> CancelTicketAsync(Guid eventId, Guid ticketId, int quantity)
@@ -36,15 +36,15 @@ public class TicketService : ITicketService
 
     public async Task<TicketPurchaseResult> PurchaseTicketAsync(Guid eventId, Guid ticketId, int quantity)
     {
-        var userId = signInManager.UserManager.GetUserId(signInManager.Context.User);
-        var user = await context.Users
+        var userId = _accountService.GetUserId();
+        var user = await _context.Users
             .Include(u => u.Tickets)
             .Include(u => u.EnteredEvents)
-            .FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+            .FirstOrDefaultAsync(u => u.Id == userId);
 
         var result = new TicketPurchaseResult(eventId, ticketId, user!.Id, quantity);
 
-        var @event = context.Events.Include(e => e.Tickets).FirstOrDefault(e => e.Id == eventId);
+        var @event = _context.Events.Include(e => e.Tickets).FirstOrDefault(e => e.Id == eventId);
         if (@event == null)
             return result with { Message = $"Event with id: '{eventId}' was not found" };
 
@@ -64,7 +64,7 @@ public class TicketService : ITicketService
         if (!user.EnteredEvents.Contains(@event))
             user.EnteredEvents.Add(@event);
 
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         return result with { Success = true, Message = "Ticket purchased successfully" };
     }

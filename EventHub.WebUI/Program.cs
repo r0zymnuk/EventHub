@@ -2,15 +2,19 @@ using EventHub.Application;
 using EventHub.Infrastructure;
 using EventHub.Infrastructure.Data;
 using EventHub.WebUI.Filters;
+using EventHub.WebUI.Services;
 using Microsoft.AspNetCore.Mvc.Razor;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.Configure<IdentityServerSettings>(builder.Configuration.GetSection("IdentityServerSettings"));
+
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(
     builder.Configuration.GetConnectionString("DefaultConnection")!,
     Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "users"));
+builder.Services.AddSingleton<ITokenService, TokenService>();
 builder.Services.AddScoped<MessageActionFilter>();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
@@ -38,6 +42,25 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.AddSupportedUICultures(supportedCultures);
 });
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "cookie";
+    options.DefaultChallengeScheme = "oidc";
+}).AddCookie("cookie")
+    .AddOpenIdConnect("oidc", options =>
+    {
+        var identityServerSettings = builder.Configuration.GetSection("IdentityServerSettings").Get<IdentityServerSettings>();
+        options.Authority = builder.Configuration["InteractiveServiceSettings:AuthorityUrl"];
+        options.ClientId = builder.Configuration["InteractiveServiceSettings:ClientId"];
+        options.ClientSecret = builder.Configuration["InteractiveServiceSettings:ClientSecret"];
+        options.Scope.Add(builder.Configuration["InteractiveServiceSettings:Scopes:0"] ?? string.Empty);
+        
+        options.ResponseType = "code";
+        options.UsePkce = true;
+        options.ResponseMode = "query";
+        options.SaveTokens = true;
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -57,7 +80,6 @@ app.UseStaticFiles();
 
 app.UseRequestLocalization();
 app.UseRouting();
-
 
 app.UseAuthentication();
 app.UseAuthorization();
