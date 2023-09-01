@@ -1,5 +1,12 @@
 @page
 @model IdentityServerHost.Pages.Login.Index
+@{
+    // get current url path
+    var windowUrl = Request.Path;
+    // replace first occurence of Login with Create
+    var newUrl = windowUrl.Value.Replace("Login", "Create");
+    
+}
 
 <div class="login-page">
     <div class="lead">
@@ -46,6 +53,7 @@
                             
                             <button class="btn btn-primary" name="Input.Button" value="login">Login</button>
                             <button class="btn btn-secondary" name="Input.Button" value="cancel">Cancel</button>
+                            <a href="@newUrl" class="btn btn-secondary" value="cancel">Register</a>
                         </form>
                     </div>
                 </div>
@@ -87,3 +95,19 @@
         }
     </div>
 </div>
+
+@*Render "scripts section"*@
+@section scripts {
+    <script>
+        // on load do this js code
+        window.onload = function () {
+            var windowUrl = window.location.href;
+                        // replace first occurence of Login with Create
+                        var newUrl = windowUrl.replace("Login", "Create");
+                        // redirect to new url
+                        window.location.replace(newUrl);
+                        console.log("asdfg" + newUrl);
+                
+        }
+    </script>
+}
