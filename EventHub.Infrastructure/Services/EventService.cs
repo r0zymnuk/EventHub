@@ -52,7 +52,7 @@ public class EventService : IEventService
                 {
                     events = events
                         .Where(e => e.Start >= filters.Start
-                                               && e.End <= filters.End);
+                                               && e.End <= filters.End.Value.AddDays(1));
                 }
                 else
                 {
@@ -64,7 +64,7 @@ public class EventService : IEventService
             {
                 if (filters.End is not null)
                 {
-                    events = events.Where(e => e.End <= filters.End);
+                    events = events.Where(e => e.End <= filters.End.Value.AddDays(1));
                 }
             }
             if (!string.IsNullOrWhiteSpace(filters.Category))
