@@ -2,19 +2,17 @@ using EventHub.Application;
 using EventHub.Infrastructure;
 using EventHub.Infrastructure.Data;
 using EventHub.WebUI.Filters;
-using EventHub.WebUI.Services;
 using Microsoft.AspNetCore.Mvc.Razor;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.Configure<IdentityServerSettings>(builder.Configuration.GetSection("IdentityServerSettings"));
+
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(
     builder.Configuration.GetConnectionString("DefaultConnection")!,
     Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "users"));
-builder.Services.AddSingleton<ITokenService, TokenService>();
 builder.Services.AddScoped<MessageActionFilter>();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
@@ -49,7 +47,6 @@ builder.Services.AddAuthentication(options =>
 }).AddCookie("cookie")
     .AddOpenIdConnect("oidc", options =>
     {
-        var identityServerSettings = builder.Configuration.GetSection("IdentityServerSettings").Get<IdentityServerSettings>();
         options.Authority = builder.Configuration["InteractiveServiceSettings:AuthorityUrl"];
         options.ClientId = builder.Configuration["InteractiveServiceSettings:ClientId"];
         options.ClientSecret = builder.Configuration["InteractiveServiceSettings:ClientSecret"];
@@ -70,7 +67,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-else if (args.Length == 1 && args[0].ToLower() == "seeddata")
+else if (args.Length == 1 && args[0].ToLower() == "seed-data")
 {
     Seed.SeedData(app);
 }

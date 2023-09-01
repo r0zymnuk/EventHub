@@ -3,13 +3,6 @@ using EventHub.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using System.Diagnostics;
-using EventHub.WebUI.Services;
-using IdentityModel.Client;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json;
-using System.Security.Claims;
-using IdentityModel;
 
 namespace EventHub.WebUI.Controllers;
 
@@ -18,15 +11,12 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly IStringLocalizer<HomeController> _stringLocalizer;
-    private readonly ITokenService _tokenService;
 
     public HomeController(ILogger<HomeController> logger, 
-        IStringLocalizer<HomeController> stringLocalizer, 
-        ITokenService tokenService)
+        IStringLocalizer<HomeController> stringLocalizer)
     {
         _logger = logger;
         _stringLocalizer = stringLocalizer;
-        _tokenService = tokenService;
     }
 
     public IActionResult Index()
