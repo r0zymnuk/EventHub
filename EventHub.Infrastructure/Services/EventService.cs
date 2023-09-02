@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
+using EventHub.Application.Dtos;
 using EventHub.Application.Dtos.Response.Event;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
-using EventHub.Application.Dtos;
 
 namespace EventHub.Infrastructure.Services;
 
@@ -53,7 +52,7 @@ public class EventService : IEventService
                 {
                     events = events
                         .Where(e => e.Start >= filters.Start
-                                               && e.End <= filters.End);
+                                               && e.End <= filters.End.Value.AddDays(1));
                 }
                 else
                 {
@@ -65,7 +64,7 @@ public class EventService : IEventService
             {
                 if (filters.End is not null)
                 {
-                    events = events.Where(e => e.End <= filters.End);
+                    events = events.Where(e => e.End <= filters.End.Value.AddDays(1));
                 }
             }
             if (!string.IsNullOrWhiteSpace(filters.Category))
@@ -148,7 +147,7 @@ public class EventService : IEventService
     }
 
     public Task<Event> UpdateEventAsync(Guid eventId, Event @event)
-{
-    throw new NotImplementedException();
-}
+    {
+        throw new NotImplementedException();
+    }
 }

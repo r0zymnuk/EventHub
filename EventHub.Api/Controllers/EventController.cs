@@ -1,17 +1,27 @@
-﻿using EventHub.Application.Dtos.Request;
 using EventHub.Application.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventHub.Api.Controllers;
-[Route("api/[controller]")]
+
 [ApiController]
+[Route("[controller]")]
+// [Authorize]
 public class EventController : ControllerBase
 {
-    private readonly IEventService eventService;
+    //private readonly ILogger<EventController> _logger;
+    private readonly IEventService _eventService;
 
-    public EventController(IEventService eventService)
+    public EventController(
+        //ILogger<EventController> logger, 
+        IEventService eventService)
     {
-        this.eventService = eventService;
+        //_logger = logger;
+        _eventService = eventService;
+    }
+
+    [HttpGet(Name = "GetEvents")]
+    public async Task<IActionResult> Get()
+    {
+        return Ok(await _eventService.GetEventsAsync(take: 3));
     }
 }

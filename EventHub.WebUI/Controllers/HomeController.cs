@@ -1,7 +1,6 @@
 ﻿using EventHub.WebUI.Filters;
 using EventHub.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using System.Diagnostics;
 
 namespace EventHub.WebUI.Controllers;
@@ -9,13 +8,12 @@ namespace EventHub.WebUI.Controllers;
 [ServiceFilter(typeof(MessageActionFilter))]
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-    private readonly IStringLocalizer<HomeController> _stringLocalizer;
+    //private readonly ILogger<HomeController> _logger;
 
-    public HomeController(ILogger<HomeController> logger, IStringLocalizer<HomeController> stringLocalizer)
+    public HomeController(
+        /*ILogger<HomeController> logger*/)
     {
-        _logger = logger;
-        _stringLocalizer = stringLocalizer;
+        //_logger = logger;
     }
 
     public IActionResult Index()

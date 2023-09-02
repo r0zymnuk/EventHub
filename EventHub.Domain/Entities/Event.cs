@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace EventHub.Domain.Entities;
+﻿namespace EventHub.Domain.Entities;
 
 public class Event : EventBase
 {

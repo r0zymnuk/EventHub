@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EventHub.Domain.Shared;
+﻿namespace EventHub.Domain.Shared;
 public class EventBase : BaseEntity
 {
     public string ImageUrl { get; set; } = string.Empty;
