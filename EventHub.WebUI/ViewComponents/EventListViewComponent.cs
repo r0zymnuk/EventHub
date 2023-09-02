@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using EventHub.Application.Dtos;
-using EventHub.Application.Dtos.Response.Event;
+﻿using EventHub.Application.Dtos;
 using EventHub.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 

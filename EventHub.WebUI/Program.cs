@@ -1,15 +1,21 @@
 using EventHub.Application;
 using EventHub.Infrastructure;
 using EventHub.Infrastructure.Data;
-using EventHub.Infrastructure.DataContext;
 using EventHub.WebUI.Filters;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+
 builder.Services.AddApplication();
-builder.Services.AddInfrastruction(builder.Configuration.GetConnectionString("DefaultConnection")!);
+builder.Services.AddInfrastructure(
+    builder.Configuration.GetConnectionString("DefaultConnection")!,
+    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "users"));
 builder.Services.AddScoped<MessageActionFilter>();
+
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 builder.Services.AddControllersWithViews(options =>
 {
@@ -22,6 +28,34 @@ builder.Services.AddControllersWithViews(options =>
         options.ViewLocationFormats.Add("/Views/Shared/Components/{0}/{1}.cshtml");
         options.ViewLocationFormats.Add("/Views/Shared/Components/{0}/Default.cshtml");
 
+    })
+    .AddDataAnnotationsLocalization()
+    .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix);
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { "en", "uk" };
+    options.SetDefaultCulture("en");
+    options.AddSupportedCultures(supportedCultures);
+    options.AddSupportedUICultures(supportedCultures);
+});
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "cookie";
+    options.DefaultChallengeScheme = "oidc";
+}).AddCookie("cookie")
+    .AddOpenIdConnect("oidc", options =>
+    {
+        options.Authority = builder.Configuration["InteractiveServiceSettings:AuthorityUrl"];
+        options.ClientId = builder.Configuration["InteractiveServiceSettings:ClientId"];
+        options.ClientSecret = builder.Configuration["InteractiveServiceSettings:ClientSecret"];
+        options.Scope.Add(builder.Configuration["InteractiveServiceSettings:Scopes:0"] ?? string.Empty);
+
+        options.ResponseType = "code";
+        options.UsePkce = true;
+        options.ResponseMode = "query";
+        options.SaveTokens = true;
     });
 
 var app = builder.Build();
@@ -33,7 +67,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-else if (args.Length == 1 && args[0].ToLower() == "seeddata")
+else if (args.Length == 1 && args[0].ToLower() == "seed-data")
 {
     Seed.SeedData(app);
 }
@@ -41,8 +75,10 @@ else if (args.Length == 1 && args[0].ToLower() == "seeddata")
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseRequestLocalization();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

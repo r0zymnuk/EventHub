@@ -1,10 +1,8 @@
-﻿using Castle.Core.Internal;
-using Microsoft.EntityFrameworkCore;
-using ChanceNET;
-using System.ComponentModel;
-using Location = EventHub.Domain.ValueObjects.Location;
+﻿using ChanceNET;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Location = EventHub.Domain.ValueObjects.Location;
 
 namespace EventHub.Infrastructure.Data;
 public class Seed
@@ -28,7 +26,7 @@ public class Seed
             context.Categories.Add(new Category { Name = "Charity", Description = "Join hands in making a meaningful difference with our heartwarming charity events, where compassion and generosity come together to impact lives and create positive change." });
             context.Categories.Add(new Category { Name = "Health", Description = "Embrace wellness and vitality with our enriching health events, where expert insights, rejuvenating practices, and holistic approaches empower you on your journey to well-being." });
             context.Categories.Add(new Category { Name = "Travel & Outdoor", Description = "Embark on a voyage of exploration and adventure with our invigorating travel and outdoor events, where the world becomes your playground and nature's wonders unfold before your eyes." });
-            
+
 
             context.SaveChanges();
         }
@@ -36,7 +34,8 @@ public class Seed
         if (!context.Events.Any())
         {
             context.Events.AddRange(
-                new Event {
+                new Event
+                {
                     Title = "Summer Sounds Music Festival",
                     Description = "Experience a weekend of musical delight with our Summer Sounds Music Festival featuring a lineup of top artists and bands.",
                     ImageUrl = "https://wepik.com/api/image/ai/99d71133-1061-4684-bcd4-004f3438c8c5",
@@ -48,7 +47,6 @@ public class Seed
                     Location = GenerateRandomLocation(),
                     Status = Status.Upcoming,
                     Format = Format.OnSite,
-                    IsFree = false,
                     AgeRestriction = 15,
                     Capacity = 1000,
                     Registered = 0,
@@ -69,7 +67,10 @@ public class Seed
                     ImageUrl = "https://th.bing.com/th/id/OIG.1bg8vO6W76xVIi76arS9",
                     Organizer = GenerateRandomUser(),
                     Categories = new List<Category> { context.Categories.First(c => c.Name == "Arts") },
-                    IsFree = true,
+                    Tickets = new List<Ticket>
+                    {
+                        new Ticket { Name = "General Admission", IsFree = true, Quantity = 100 },
+                    },
                     Location = GenerateRandomLocation(),
                     Status = Status.Upcoming,
                     Format = Format.OnSite,
@@ -80,7 +81,8 @@ public class Seed
                     Start = DateTime.UtcNow.AddDays(30),
                     End = DateTime.UtcNow.AddDays(32),
                 },
-                new Event {
+                new Event
+                {
                     Title = "Summer Sports Camp",
                     Description = "Join us for a week of fun and games at our Summer Sports Camp featuring a variety of sports and activities.",
                     ImageUrl = "https://th.bing.com/th/id/OIG.Nh1C86pytx7kCT4pWIii",
@@ -93,7 +95,6 @@ public class Seed
                     Location = GenerateRandomLocation(),
                     Status = Status.Upcoming,
                     Format = Format.OnSite,
-                    IsFree = false,
                     AgeRestriction = 15,
                     Capacity = 1000,
                     Registered = 0,
@@ -121,7 +122,7 @@ public class Seed
                     },
                     Location = GenerateRandomLocation(),
                     Status = Status.Upcoming,
-                    Format = Format.Combined,
+                    Format = Format.Hybrid,
                     Start = DateTime.UtcNow.AddDays(20),
                     End = DateTime.UtcNow.AddDays(30),
                     Currency = "EUR",

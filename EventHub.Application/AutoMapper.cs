@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using EventHub.Application.Dtos.Request.Account;
+﻿using EventHub.Application.Dtos.Request.Account;
 using EventHub.Application.Dtos.Response;
 using EventHub.Application.Dtos.Response.Account.User;
 using EventHub.Application.Dtos.Response.Event;
@@ -19,9 +18,6 @@ public class AutoMapper : Profile
         CreateMap<RegisterUserModel, User>();
         CreateMap<User, UserViewModel>();
     }
-
-    private static List<string> GetCategoryNames(ICollection<Category> categories)
-        => categories.Select(category => category.Name).ToList();
 
     public static EventCardModel CardFromEvent(Event @event)
     {

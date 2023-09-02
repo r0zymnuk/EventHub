@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System.Collections.ObjectModel;
 
 namespace EventHub.Domain.Entities;
 public class User : IdentityUser<Guid>

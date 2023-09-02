@@ -1,8 +1,6 @@
 ﻿using EventHub.Application.Services;
-using EventHub.Domain.Entities;
 using EventHub.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
@@ -19,7 +17,7 @@ public class TicketController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Purchase([FromQuery]Guid eventId, [FromQuery]Guid ticketId, [FromQuery]int quantity)
+    public async Task<IActionResult> Purchase([FromQuery] Guid eventId, [FromQuery] Guid ticketId, [FromQuery] int quantity)
     {
         var purchaseResult = await ticketService.PurchaseTicketAsync(eventId, ticketId, quantity);
 

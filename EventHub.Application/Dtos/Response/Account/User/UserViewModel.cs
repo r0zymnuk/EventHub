@@ -1,6 +1,4 @@
 ﻿using EventHub.Application.Dtos.Response.Event;
-using EventHub.Domain.Entities;
-using System.Collections.ObjectModel;
 
 namespace EventHub.Application.Dtos.Response.Account.User;
 
@@ -12,9 +10,9 @@ public class UserViewModel
     public string Email { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; }
 
-    public IEnumerable<Category> FavouriteCategories = new Collection<Category>();
-    public IEnumerable<EventCardModel> EnteredEvents = new Collection<EventCardModel>();
-    public IEnumerable<Ticket> Tickets = new Collection<Ticket>();
-    public IEnumerable<EventCardModel> OrganizedEvents = new Collection<EventCardModel>();
-    public IEnumerable<Tour> OrganizedTours = new Collection<Tour>();
+    public List<Category> FavouriteCategories = new();
+    public List<EventCardModel> EnteredEvents = new();
+    public List<Ticket> Tickets = new();
+    public List<EventCardModel> OrganizedEvents = new();
+    public List<Tour> OrganizedTours = new();
 }

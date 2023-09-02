@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EventHub.Infrastructure.Data.EntityConfiguration;
 public class EventConfiguration : IEntityTypeConfiguration<Event>
@@ -42,9 +37,22 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
         builder.Property(e => e.Currency)
             .IsRequired()
             .HasMaxLength(3)
+            .IsFixedLength()
             .HasDefaultValue("USD");
 
-        builder.OwnsMany(e => e.PromoCodes).Property(p => p.Code).HasMaxLength(10).IsRequired();
+        builder.OwnsMany(e => e.PromoCodes)
+            .Property(p => p.Code)
+            .IsRequired()
+            .HasMaxLength(10);
+
+        builder.OwnsMany(e => e.PromoCodes)
+            .Property(p => p.Quantity)
+            .IsRequired();
+
+        builder.OwnsMany(e => e.PromoCodes)
+            .Property(p => p.Discount)
+            .HasColumnType("decimal(18,2)")
+            .IsRequired();
 
         builder.Property(e => e.CreatedAt)
             .IsRequired();

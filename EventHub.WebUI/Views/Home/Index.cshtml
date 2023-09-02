@@ -1,23 +1,17 @@
 ﻿@using EventHub.Application.Services;
+@using Microsoft.AspNetCore.Mvc.Localization;
 @inject IEventService _eventService;
+@inject IViewLocalizer Localizer;
 @{
     ViewData["Title"] = "Home Page";
-    // List<string> heroBackImg = new List<string>()
-    // {
-    //     "https://images.pexels.com/photos/167491/pexels-photo-167491.jpeg?auto=compress&w=1920",
-    //     "https://images.pexels.com/photos/13857977/pexels-photo-13857977.jpeg?auto=compress&w=1920",
-    //     "https://images.pexels.com/photos/1313814/pexels-photo-1313814.jpeg?auto=compress&w=2000"
-    // };
-    // Random rnd = new Random();
-    // int index = rnd.Next(heroBackImg.Count);
 
     var events = await _eventService.GetEventsAsync(take: 4);
 }
 
-<div class="bg-[#111419] container mx-auto pt-[5rem] px-8 sm:px-0">
+<div class="bg-[#111419] container mx-auto pt-[5rem] px-8 sm:px-0 lg:w-[calc(85%)]">
     <div id="controls-carousel" class="relative" data-carousel="static">
         <!-- Carousel wrapper -->
-        <div class="relative overflow-hidden rounded-lg h-96 md:h-96">
+        <div class="relative overflow-hidden rounded-lg h-96 md:h-96 lg:h-[30rem]">
             <!-- Item 1 -->
             <div class="hidden duration-700 ease-in-out" data-carousel-item>
                 <img src="https://placehold.co/600x400"
@@ -78,16 +72,15 @@
          style="background: rgb(17,20,25); background: linear-gradient(180deg, rgba(17,20,25,1) 9%, rgba(51,51,51,1) 95%);">
     <div class="py-5 px-4 sm:px-1 mx-auto max-w-screen-xl text-center lg:py-10 z-10 relative">
         <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-5xl dark:text-white">
-            The best place to define your next weekend
+            @Localizer["HeroHeading"]
         </h1>
         <section class="w-full mt-[3rem]">
-            <div class="pt-8 px-4 mx-auto max-w-screen-xl text-center lg:pt-16 z-10 relative">
-                <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-4xl lg:text-5xl dark:text-white">
+            <div class="pt-4 mx-auto max-w-screen-xl text-center lg:pt-16 z-10 relative">
+                <h1 class="mb-4 text-3xl font-extrabold tracking-tight leading-none text-gray-900 md:text-3xl lg:text-4xl dark:text-white">
                     Find the one that suits you best
                 </h1>
                 <section class="items-center mt-10">
-                    <div class="max-w-screen-xl px-4 mx-auto lg:px-12 w-full">
-                        <!-- Start coding here -->
+                    <div class="max-w-screen-xl mx-auto w-full">
                             <vc:event-search></vc:event-search>
                     </div>
                 </section>
@@ -115,8 +108,8 @@
                 <img class="object-cover sm:h-full sm:w-56 xs:w-full md:rounded-none md:rounded-l-lg" src="@e.ImageUrl"
                      alt="">
                 <div class="p-4 leading-normal h-full">
-                    <h5 class="mb-3 text-lg font-bold tracking-tight text-gray-900 dark:text-white">@e.Title</h5>
-                    <span class="flex gap-4 items-center mb-3 font-normal text-gray-700 dark:text-gray-400"
+                    <h5 class="mb-3 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">@e.Title</h5>
+                    <span class="flex gap-4 text-lg items-center mb-3 font-normal text-gray-700 dark:text-gray-400"
                           style="text-overflow: ellipsis;">
                         <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                              viewBox="0 0 17 21">
@@ -127,7 +120,7 @@
                         </svg>
                         @e.Location
                     </span>
-                    <span class="flex gap-4 items-center font-normal text-gray-700 dark:text-gray-400">
+                    <span class="flex gap-4 text-lg items-center font-normal text-gray-700 dark:text-gray-400">
                         <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                              viewBox="0 0 20 20">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"

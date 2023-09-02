@@ -13,7 +13,7 @@
             Events for you
         </h1>
         <section class="items-center mt-10">
-            <div class="max-w-screen-xl px-4 mx-auto lg:px-12 w-full">
+            <div class="max-w-screen-xl mx-auto w-full">
                 <!-- Start coding here -->
                 <vc:event-search></vc:event-search>
             </div>
@@ -22,7 +22,11 @@
 
 </section>
 
-<div class="lg:px-[6rem] sm:px-[1rem] px-[1rem] py-6 items-center-px-4 bg-[#333333]">
+<div class="lg:px-[6rem] sm:px-[1rem] px-[2rem] py-6 items-center-px-4 bg-[#333333]">
+    @if (Model.Count == 0)
+    {
+        <h1 class="text-xl py-2 text-center bg-[#333333] font-bold tracking-tight leading-none text-gray-900 md:text-2xl lg:text-3xl dark:text-white">No events found</h1>
+    }
     <div class="grid lg:grid-cols-2 sm:grid-cols-1 gap-4 mb-4">
         @foreach (var e in Model)
         {
@@ -30,8 +34,8 @@
                 <img class="object-cover sm:h-full sm:w-56 xs:w-full md:rounded-none md:rounded-l-lg" src="@e.ImageUrl"
                      alt="">
                 <div class="p-4 leading-normal h-full">
-                    <h5 class="mb-3 text-lg font-bold tracking-tight text-gray-900 dark:text-white">@e.Title</h5>
-                    <span class="flex gap-4 items-center mb-3 font-normal text-gray-700 dark:text-gray-400"
+                    <h5 class="mb-3 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">@e.Title</h5>
+                    <span class="flex gap-4 text-lg items-center mb-3 font-normal text-gray-700 dark:text-gray-400"
                           style="text-overflow: ellipsis;">
                         <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                              viewBox="0 0 17 21">
@@ -42,7 +46,7 @@
                         </svg>
                         @e.Location
                     </span>
-                    <span class="flex gap-4 items-center font-normal text-gray-700 dark:text-gray-400">
+                    <span class="flex gap-4 text-lg items-center font-normal text-gray-700 dark:text-gray-400">
                         <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                              viewBox="0 0 20 20">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"

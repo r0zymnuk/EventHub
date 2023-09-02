@@ -1,5 +1,6 @@
-﻿@using EventHub.Domain.Entities;
-@model User
+﻿@inject IViewLocalizer Localizer
+@using Microsoft.AspNetCore.Mvc.Localization;
+@model EventHub.Application.Dtos.Response.Account.User.UserViewModel
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -11,43 +12,43 @@
         <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl px-[1rem]">
             <a href="/" class="flex items-center">
                 <!-- <img src="https://flowbite.com/docs/images/logo.svg" class="mr-3 h-6 sm:h-9" alt="Flowbite Logo" /> -->
-                <span class="self-center text-2xl font-bold whitespace-nowrap dark:text-white">
+                <span class="self-center text-3xl font-bold whitespace-nowrap dark:text-white">
                     Event<span class="text-[#1D4ED8]">Hub</span>
                 </span>
             </a>
             <div class="flex items-center lg:order-2">
                 @if (Model is null)
                 {
-                    <a asp-action="Login" asp-controller="Account" asp-route-returnUrl="@Context.Request.Path" class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Log in</a>
-                    <a asp-action="Register" asp-controller="Account" asp-route-returnUrl="@Context.Request.Path" class="text-white bg-blue-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"> Get started</a>
+                    <a asp-action="Login" asp-controller="Account" asp-route-returnUrl="@Context.Request.Path" class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-md px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">@Localizer["Log in"]</a>
+                    <a asp-action="Register" asp-controller="Account" asp-route-returnUrl="@Context.Request.Path" class="text-white bg-blue-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-md px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">@Localizer["Sign up"]</a>
                 }
                 else
                 {
-                    <button type="button" class="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+                    <button type="button" class="flex mr-3 text-md bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
                         <span class="sr-only">Open user menu</span>
-                        <img class="w-8 h-8 rounded-full" src="@(string.IsNullOrWhiteSpace(Model.ImageUrl) ? "https://placehold.co/400x400" : Model.ImageUrl )" alt="user photo">
+                        <img class="w-10 h-10 rounded-full object-cover" src="@(!string.IsNullOrWhiteSpace(Model.ImageUrl) ? Url.ActionLink("GetImage", "Image", new { imageName = Model.ImageUrl}) : $"https://ui-avatars.com/api/?name={Model.FirstName}+{Model.LastName}&size=256&background=random&color=fff")" alt="user photo">
                     </button>
                     <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
                         <div class="px-4 py-3">
-                            <span class="block text-sm text-gray-900 dark:text-white">@Model.FullName</span>
-                            <span class="block text-sm  text-gray-500 truncate dark:text-gray-400">@Model.Email</span>
+                            <span class="block text-md text-gray-900 dark:text-white">@Model.FirstName @Model.LastName</span>
+                            <span class="block text-md  text-gray-500 truncate dark:text-gray-400">@Model.Email</span>
                         </div>
                         <ul class="py-2" aria-labelledby="user-menu-button">
                             <li>
-                                <a asp-action="Account" asp-controller="Account" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Profile</a>
+                                <a asp-action="Account" asp-controller="Account" class="block px-4 py-2 text-md text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">@Localizer["Profile"]</a>
                             </li>
                             <li>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Dashboard</a>
+                                <a href="#" class="block px-4 py-2 text-md text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">@Localizer["Dashboard"]</a>
                             </li>
                             <li>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Settings</a>
+                                <a href="#" class="block px-4 py-2 text-md text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">@Localizer["Settings"]</a>
                             </li>
-                            <li>
+                            @* <li>
                                 <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Earnings</a>
-                            </li>
+                            </li> *@
                             <hr class="h-1px bg-gray-200 border-1 border-gray-600 dark:bg-gray-700">
                             <li>
-                                <form asp-action="Logout" asp-controller="Account" method="post" class="w-full"><button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</button></form>
+                                <form asp-action="Logout" asp-controller="Account" method="post" class="w-full"><button type="submit" class="block w-full text-left px-4 py-2 text-md text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">@Localizer["Sign out"]</button></form>
                             </li>
                         </ul>
                     </div>
@@ -70,31 +71,35 @@
                 </button>
             </div>
             <div class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1" id="mobile-menu-2">
-                <ul class="flex flex-col mt-4 font-medium text-md lg:flex-row lg:space-x-8 lg:mt-0">
+                <ul class="flex flex-col mt-4 font-medium text-lg lg:flex-row lg:space-x-8 lg:mt-0">
                     <li>
                         <a href="/"
                            class="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
-                           aria-current="page">Home</a>
+                           aria-current="page">@Localizer["Home"]</a>
                     </li>
                     <li>
                         <a asp-action="AllEvents" asp-controller="Event"
-                           class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">All Events
+                           class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">
+                           @Localizer["All Events"]
                         </a>
                     </li>
                     <li>
-                        <a href="#"
-                           class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Categories</a>
+                        <a href="#" 
+                            class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">
+                            @Localizer["Categories"]
+                        </a>
                     </li>
                     <li>
                         <a href="#"
                            class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">
-                            My
-                            Events
+                            @Localizer["My Events"]
                         </a>
                     </li>
                     <li>
                         <a href="#"
-                           class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Help</a>
+                           class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">
+                            @Localizer["Help"]
+                        </a>
                     </li>
                 </ul>
             </div>
