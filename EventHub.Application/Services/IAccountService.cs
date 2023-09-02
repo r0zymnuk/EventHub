@@ -7,6 +7,7 @@ public interface IAccountService
 {
     Guid GetUserId();
     Task<UserViewModel?> GetUserAsync();
+    Task<RegisterResponse> RegisterAsync(RegisterUserModel user);
     Task<User> UpdateUserAsync(UpdateUserModel user);
     Task<User> DeleteUserAsync();
 }

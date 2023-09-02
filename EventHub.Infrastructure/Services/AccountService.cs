@@ -1,11 +1,10 @@
-﻿using System.Security.Claims;
-using AutoMapper;
+﻿using AutoMapper;
 using EventHub.Application.Dtos.Request.Account;
 using EventHub.Application.Dtos.Response.Account;
 using EventHub.Application.Dtos.Response.Account.User;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace EventHub.Infrastructure.Services;
 public class AccountService : IAccountService
@@ -39,6 +38,30 @@ public class AccountService : IAccountService
             .Include(u => u.EnteredEvents)
             .FirstOrDefaultAsync(u => u.Id == userId);
         return _mapper.Map<UserViewModel>(user);
+    }
+
+    public async Task<RegisterResponse> RegisterAsync(RegisterUserModel registerUser)
+    {
+        var response = new RegisterResponse();
+
+        bool isTaken = await _context.Users.AnyAsync(u => u.Email == registerUser.Email || (registerUser.PhoneNumber != null && registerUser.PhoneNumber.Length > 5 && u.PhoneNumber == registerUser.PhoneNumber));
+        if (isTaken)
+        {
+            response.Succeeded = false;
+            response.Error = "Email or phone number is already taken";
+            return response;
+        }
+        var newUser = _mapper.Map<User>(registerUser);
+        newUser.UserName = newUser.FirstName + newUser.LastName + new Random().Next(1000, 9999);
+
+        // var user = await _userManager.CreateAsync(newUser, registerUser.Password);
+        // if (!user.Succeeded)
+        // {
+        //     response.Error = user.Errors.First().Description;
+        //     return response;
+        // }
+
+        return response;
     }
 
     public async Task<User> UpdateUserAsync(UpdateUserModel update)
@@ -101,7 +124,7 @@ public class AccountService : IAccountService
         await _context.SaveChangesAsync();
         return user;
     }
-    
+
     public Guid GetUserId()
     {
         var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);

@@ -18,7 +18,7 @@ public static class DependencyInjection
         {
             options.UseSqlServer(connectionString);
         });
-        
+
         //services.AddDefaultIdentity<User>(options =>
         //    {
         //        options.Password.RequireNonAlphanumeric = false;
@@ -26,7 +26,7 @@ public static class DependencyInjection
         //    .AddEntityFrameworkStores<ApplicationDbContext>()
         //    .AddDefaultUI()
         //    .AddDefaultTokenProviders();
-        
+
 
         return services;
     }

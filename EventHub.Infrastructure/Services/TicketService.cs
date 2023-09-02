@@ -1,5 +1,4 @@
 ﻿using EventHub.Application.Dtos.Response.Tickets;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventHub.Infrastructure.Services;
@@ -16,7 +15,7 @@ public class TicketService : ITicketService
         IAccountService accountService)
     {
         _context = context;
-        _accountService = accountService;        
+        _accountService = accountService;
     }
 
     public Task<Event> CancelTicketAsync(Guid eventId, Guid ticketId, int quantity)

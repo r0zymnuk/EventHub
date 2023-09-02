@@ -51,7 +51,7 @@ builder.Services.AddAuthentication(options =>
         options.ClientId = builder.Configuration["InteractiveServiceSettings:ClientId"];
         options.ClientSecret = builder.Configuration["InteractiveServiceSettings:ClientSecret"];
         options.Scope.Add(builder.Configuration["InteractiveServiceSettings:Scopes:0"] ?? string.Empty);
-        
+
         options.ResponseType = "code";
         options.UsePkce = true;
         options.ResponseMode = "query";

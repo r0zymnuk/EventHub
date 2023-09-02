@@ -1,8 +1,6 @@
-using System.Security.Claims;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Services;
-using Duende.IdentityServer.Test;
 using EventHub.Domain.Entities;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
@@ -10,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Security.Claims;
 
 namespace IdentityServerHost.Pages.ExternalLogin;
 
@@ -34,7 +33,7 @@ public class Callback : PageModel
         _logger = logger;
         _events = events;
     }
-        
+
     public async Task<IActionResult> OnGet()
     {
         // read external identity from the temporary cookie
@@ -72,10 +71,21 @@ public class Callback : PageModel
             // simply auto-provisions new external user
             //
             // remove the user id claim so we don't include it as an extra claim if/when we provision the user
-            var claims = externalUser.Claims.ToList();
-            claims.Remove(userIdClaim);
-            user = new User();
-            await _userManager.CreateAsync(user);
+            user = await _userManager.FindByEmailAsync(externalUser.FindFirst(ClaimTypes.Email)?.Value!);
+            if (user == null)
+            {
+                var claims = externalUser.Claims.ToList();
+                claims.Remove(userIdClaim);
+
+                user = new User
+                {
+                    Email = externalUser.FindFirst(ClaimTypes.Email)?.Value,
+                    FirstName = externalUser.FindFirst(ClaimTypes.GivenName)?.Value,
+                    LastName = externalUser.FindFirst(ClaimTypes.Surname)?.Value,
+                    UserName = externalUser.FindFirst(ClaimTypes.GivenName)?.Value + externalUser.FindFirst(ClaimTypes.Surname)?.Value + Guid.NewGuid().ToString().Substring(0, 4)
+                };
+                await _userManager.CreateAsync(user);
+            }
 
             await _userManager.AddLoginAsync(user, new UserLoginInfo(provider, providerUserId, provider));
         }
@@ -86,7 +96,7 @@ public class Callback : PageModel
         var additionalLocalClaims = new List<Claim>();
         var localSignInProps = new AuthenticationProperties();
         CaptureExternalLoginContext(result, additionalLocalClaims, localSignInProps);
-            
+
         // issue authentication cookie for user
         var isuser = new IdentityServerUser(user.Id.ToString())
         {

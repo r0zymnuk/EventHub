@@ -1,7 +1,4 @@
-﻿using System.Security.Claims;
-using EventHub.Application.Services;
-using EventHub.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using EventHub.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventHub.WebUI.ViewComponents;

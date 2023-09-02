@@ -3,7 +3,6 @@ using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Stores;
-using Duende.IdentityServer.Test;
 using EventHub.Domain.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -25,10 +24,10 @@ public class Index : PageModel
     private readonly IIdentityProviderStore _identityProviderStore;
 
     public ViewModel View { get; set; }
-        
+
     [BindProperty]
     public InputModel Input { get; set; }
-        
+
     public Index(
         IIdentityServerInteractionService interaction,
         IAuthenticationSchemeProvider schemeProvider,
@@ -47,7 +46,7 @@ public class Index : PageModel
     public async Task<IActionResult> OnGet(string returnUrl)
     {
         await BuildModelAsync(returnUrl);
-            
+
         if (View.IsExternalLoginOnly)
         {
             // we only have one option for logging in and it's an external provider
@@ -56,11 +55,17 @@ public class Index : PageModel
 
         return Page();
     }
-        
+
     public async Task<IActionResult> OnPost()
     {
         // check if we are in the context of an authorization request
         var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
+
+        // if user clicker the "register" button - we redirect them to the register page
+        if (Input.Button == "register")
+        {
+            return Redirect("~/Account/Create?returnUrl=" + Input.ReturnUrl);
+        }
 
         // the user clicked the "cancel" button
         if (Input.Button != "login")
@@ -92,12 +97,9 @@ public class Index : PageModel
         if (ModelState.IsValid)
         {
             var user = await _signInManager.UserManager.FindByNameAsync(Input.Username);
-            if (user is null) 
-            {
-                user = await _signInManager.UserManager.FindByEmailAsync(Input.Username);
-            }
+            user ??= await _signInManager.UserManager.FindByEmailAsync(Input.Username);
             // validate username/password against in-memory store
-            if (user is not null 
+            if (user is not null
                 && (await _signInManager.CheckPasswordSignInAsync(user, Input.Password, false)) == SignInResult.Success)
             {
                 await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id.ToString(), user.UserName, clientId: context?.Client.ClientId));
@@ -151,7 +153,7 @@ public class Index : PageModel
                 }
             }
 
-            await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, "invalid credentials", clientId:context?.Client.ClientId));
+            await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, "invalid credentials", clientId: context?.Client.ClientId));
             ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
         }
 
@@ -159,14 +161,14 @@ public class Index : PageModel
         await BuildModelAsync(Input.ReturnUrl);
         return Page();
     }
-        
+
     private async Task BuildModelAsync(string returnUrl)
     {
         Input = new InputModel
         {
             ReturnUrl = returnUrl
         };
-            
+
         var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
         if (context?.IdP != null && await _schemeProvider.GetSchemeAsync(context.IdP) != null)
         {

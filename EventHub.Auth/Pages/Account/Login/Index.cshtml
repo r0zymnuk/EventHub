@@ -1,12 +1,5 @@
 @page
 @model IdentityServerHost.Pages.Login.Index
-@{
-    // get current url path
-    var windowUrl = Request.Path;
-    // replace first occurence of Login with Create
-    var newUrl = windowUrl.Value.Replace("Login", "Create");
-    
-}
 
 <div class="login-page">
     <div class="lead">
@@ -53,7 +46,7 @@
                             
                             <button class="btn btn-primary" name="Input.Button" value="login">Login</button>
                             <button class="btn btn-secondary" name="Input.Button" value="cancel">Cancel</button>
-                            <a href="@newUrl" class="btn btn-secondary" value="cancel">Register</a>
+                            <button class="btn btn-info" name="Input.Button" value="register">Register</button>
                         </form>
                     </div>
                 </div>
@@ -68,10 +61,10 @@
                         <h2>External Account</h2>
                     </div>
                     <div class="card-body">
-                        <ul class="list-inline">
+                        <ul class="list-inline flex">
                             @foreach (var provider in Model.View.VisibleExternalProviders)
                             {
-                                <li class="list-inline-item">
+                                <li class="list-inline-item mx-2">
                                     <a class="btn btn-secondary"
                                        asp-page="/ExternalLogin/Challenge"
                                        asp-route-scheme="@provider.AuthenticationScheme"
@@ -95,19 +88,3 @@
         }
     </div>
 </div>
-
-@*Render "scripts section"*@
-@section scripts {
-    <script>
-        // on load do this js code
-        window.onload = function () {
-            var windowUrl = window.location.href;
-                        // replace first occurence of Login with Create
-                        var newUrl = windowUrl.replace("Login", "Create");
-                        // redirect to new url
-                        window.location.replace(newUrl);
-                        console.log("asdfg" + newUrl);
-                
-        }
-    </script>
-}

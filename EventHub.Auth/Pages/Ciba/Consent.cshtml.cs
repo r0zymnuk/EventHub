@@ -28,7 +28,7 @@ public class Consent : PageModel
     }
 
     public ViewModel View { get; set; }
-        
+
     [BindProperty]
     public InputModel Input { get; set; }
 
@@ -127,7 +127,9 @@ public class Consent : PageModel
     }
 
     private ViewModel CreateConsentViewModel(
+#pragma warning disable IDE0060 // Remove unused parameter
         InputModel model, string id,
+#pragma warning restore IDE0060 // Remove unused parameter
         BackchannelUserLoginRequest request)
     {
         var vm = new ViewModel
@@ -135,12 +137,11 @@ public class Consent : PageModel
             ClientName = request.Client.ClientName ?? request.Client.ClientId,
             ClientUrl = request.Client.ClientUri,
             ClientLogoUrl = request.Client.LogoUri,
-            BindingMessage = request.BindingMessage
-        };
-
-        vm.IdentityScopes = request.ValidatedResources.Resources.IdentityResources
+            BindingMessage = request.BindingMessage,
+            IdentityScopes = request.ValidatedResources.Resources.IdentityResources
             .Select(x => CreateScopeViewModel(x, model?.ScopesConsented == null || model.ScopesConsented?.Contains(x.Name) == true))
-            .ToArray();
+            .ToArray()
+        };
 
         var resourceIndicators = request.RequestedResourceIndicators ?? Enumerable.Empty<string>();
         var apiResources = request.ValidatedResources.Resources.ApiResources.Where(x => resourceIndicators.Contains(x.Name));
@@ -170,7 +171,7 @@ public class Consent : PageModel
         return vm;
     }
 
-    private ScopeViewModel CreateScopeViewModel(IdentityResource identity, bool check)
+    private static ScopeViewModel CreateScopeViewModel(IdentityResource identity, bool check)
     {
         return new ScopeViewModel
         {
@@ -204,7 +205,7 @@ public class Consent : PageModel
         };
     }
 
-    private ScopeViewModel GetOfflineAccessScope(bool check)
+    private static ScopeViewModel GetOfflineAccessScope(bool check)
     {
         return new ScopeViewModel
         {

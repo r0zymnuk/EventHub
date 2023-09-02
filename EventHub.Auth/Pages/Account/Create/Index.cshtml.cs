@@ -1,9 +1,6 @@
 using Duende.IdentityServer;
-using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
-using Duende.IdentityServer.Stores;
-using Duende.IdentityServer.Test;
 using EventHub.Domain.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -19,19 +16,17 @@ public class Index : PageModel
 {
     private readonly IIdentityServerInteractionService _interaction;
     private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
 
     [BindProperty]
     public InputModel Input { get; set; }
-        
+
     public Index(
         IIdentityServerInteractionService interaction,
-        SignInManager<User> signInManager, UserManager<User> userManager)
+        UserManager<User> userManager)
     {
         // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
         _userManager = userManager;
-        _signInManager = signInManager;
-            
+
         _interaction = interaction;
     }
 
@@ -40,7 +35,7 @@ public class Index : PageModel
         Input = new InputModel { ReturnUrl = returnUrl };
         return Page();
     }
-        
+
     public async Task<IActionResult> OnPost()
     {
         // check if we are in the context of an authorization request
@@ -73,7 +68,7 @@ public class Index : PageModel
             }
         }
 
-        if ((await _userManager.FindByNameAsync(Input.Username)) is not null 
+        if ((await _userManager.FindByNameAsync(Input.Username)) is not null
             || (await _userManager.FindByEmailAsync(Input.Email)) is not null)
         {
             ModelState.AddModelError("Input.Username", "Invalid username");
@@ -82,7 +77,7 @@ public class Index : PageModel
         if (ModelState.IsValid)
         {
             //var user = _users.CreateUser(Input.Username, Input.Password, Input.Name, Input.Email);
-            User user = new User 
+            User user = new()
             {
                 Email = Input.Email,
                 FirstName = Input.FirstName,

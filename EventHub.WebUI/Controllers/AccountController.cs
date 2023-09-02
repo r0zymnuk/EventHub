@@ -1,11 +1,11 @@
 ﻿using EventHub.Application.Dtos.Request.Account;
 using EventHub.Application.Services;
 using EventHub.WebUI.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Text.Json;
-using Microsoft.AspNetCore.Authentication;
 
 namespace EventHub.WebUI.Controllers;
 public class AccountController : Controller
@@ -34,16 +34,16 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public IActionResult Register(string returnUrl = "", string error = "")
+    public IActionResult Register(string returnUrl = "/")
     {
-        return Challenge(new AuthenticationProperties { RedirectUri = "/" }, "oidc");
+        return Challenge(new AuthenticationProperties { RedirectUri = returnUrl }, "oidc");
     }
 
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> Logout()
     {
-        return await Task.Run(() => SignOut(new AuthenticationProperties { RedirectUri = "/" }, 
+        return await Task.Run(() => SignOut(new AuthenticationProperties { RedirectUri = "/" },
             "cookie", "oidc"));
     }
 

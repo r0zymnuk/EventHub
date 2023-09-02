@@ -1,9 +1,9 @@
-﻿using System.Security.Claims;
-using System.Text.Json;
-using Duende.IdentityServer;
+﻿using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Test;
 using IdentityModel;
+using System.Security.Claims;
+using System.Text.Json;
 
 namespace EventHub.Auth;
 public static class Config
@@ -67,10 +67,10 @@ public static class Config
             new IdentityResources.OpenId(),
             new IdentityResources.Profile(),
             new IdentityResources.Email(),
-            new IdentityResource("roles", 
-                "Your role(s)", 
+            new IdentityResource("roles",
+                "Your role(s)",
                 new List<string> { "role" }),
-            
+
         };
 
     public static IEnumerable<ApiScope> ApiScopes =>
@@ -79,7 +79,7 @@ public static class Config
             new ApiScope("eventhub.read", "EventHub API (Read)"),
             new ApiScope("eventhub.write", "EventHub API (Write)"),
         };
-    
+
     public static IEnumerable<ApiResource> ApiResources =>
         new ApiResource[]
         {
@@ -98,10 +98,10 @@ public static class Config
             {
                 ClientId = "m2m.client",
                 ClientName = "Client Credentials Client",
-                
+
                 AllowedGrantTypes = GrantTypes.ClientCredentials,
                 ClientSecrets = {new Secret("SuperSecretPassword".Sha256())},
-                
+
                 AllowedScopes = {"eventhub.read", "eventhub.write"},
             },
             new Client

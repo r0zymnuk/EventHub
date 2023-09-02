@@ -1,4 +1,5 @@
-﻿using EventHub.Auth;
+﻿using Duende.IdentityServer;
+using EventHub.Auth;
 using EventHub.Auth.Data;
 using EventHub.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -57,6 +58,18 @@ try
                                sql => sql.MigrationsAssembly(migrationsAssembly));
         })
         .AddAspNetIdentity<User>();
+
+    builder.Services.AddAuthentication()
+            .AddGoogle(options =>
+            {
+                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+
+                // register your IdentityServer with Google at https://console.developers.google.com
+                // enable the Google+ API
+                // set the redirect URI to https://localhost:5001/signin-google
+                options.ClientId = "990620830600-9lovef3m4h5gtcjpih9visukfahpve7n.apps.googleusercontent.com";
+                options.ClientSecret = "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";
+            });
 
     var app = builder.Build();
 

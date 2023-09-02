@@ -1,5 +1,4 @@
 using EventHub.Application.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventHub.Api.Controllers;
@@ -9,12 +8,14 @@ namespace EventHub.Api.Controllers;
 // [Authorize]
 public class EventController : ControllerBase
 {
-    private readonly ILogger<EventController> _logger;
+    //private readonly ILogger<EventController> _logger;
     private readonly IEventService _eventService;
 
-    public EventController(ILogger<EventController> logger, IEventService eventService)
+    public EventController(
+        //ILogger<EventController> logger, 
+        IEventService eventService)
     {
-        _logger = logger;
+        //_logger = logger;
         _eventService = eventService;
     }
 

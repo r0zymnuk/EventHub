@@ -19,9 +19,6 @@ public class AutoMapper : Profile
         CreateMap<User, UserViewModel>();
     }
 
-    private static List<string> GetCategoryNames(ICollection<Category> categories)
-        => categories.Select(category => category.Name).ToList();
-
     public static EventCardModel CardFromEvent(Event @event)
     {
         var description = @event.Description.Length > 150 ? @event.Description[..150] + "..." : @event.Description;
