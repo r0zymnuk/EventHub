@@ -103,6 +103,11 @@ public class AccountService : IAccountService
             user.ImageUrl = update.ImageUrl;
         }
 
+        if (update.Gender != user.Gender)
+        {
+            user.Gender = update.Gender;
+        }
+
         await _context.SaveChangesAsync();
 
         return user;

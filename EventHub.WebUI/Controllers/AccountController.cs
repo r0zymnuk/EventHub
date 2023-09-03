@@ -59,27 +59,29 @@ public class AccountController : Controller
         }
         else
         {
-            string message = "Successfully updated: ";
-            if (!string.IsNullOrWhiteSpace(model.FirstName))
-            {
-                message += $"First Name, ";
-            }
-            if (!string.IsNullOrWhiteSpace(model.LastName))
-            {
-                message += $"Last Name, ";
-            }
-            if (!string.IsNullOrWhiteSpace(model.Email))
-            {
-                message += $"Email, ";
-            }
-            if (!string.IsNullOrWhiteSpace(model.PhoneNumber))
-            {
-                message += $"Phone Number, ";
-            }
-            if (!string.IsNullOrWhiteSpace(model.ImageUrl))
-            {
-                message += $"Image Url, ";
-            }
+            // string message = "Successfully updated: ";
+            // if (!string.IsNullOrWhiteSpace(model.FirstName))
+            // {
+            //     message += $"First Name, ";
+            // }
+            // if (!string.IsNullOrWhiteSpace(model.LastName))
+            // {
+            //     message += $"Last Name, ";
+            // }
+            // if (!string.IsNullOrWhiteSpace(model.Email))
+            // {
+            //     message += $"Email, ";
+            // }
+            // if (!string.IsNullOrWhiteSpace(model.PhoneNumber))
+            // {
+            //     message += $"Phone Number, ";
+            // }
+            // if (!string.IsNullOrWhiteSpace(model.ImageUrl))
+            // {
+            //     message += $"Image Url, ";
+            // }
+            // message = message.Trim().TrimEnd(',', ':');
+            string message = "Successfully updated";
             TempData["messageJson"] = JsonSerializer
                 .Serialize(new MessageViewModel(message, MessageType.Success));
         }
