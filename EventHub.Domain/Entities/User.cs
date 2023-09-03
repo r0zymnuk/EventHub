@@ -9,6 +9,7 @@ public class User : IdentityUser<Guid>
     public string LastName { get; set; } = string.Empty;
     public string FullName => $"{FirstName} {LastName}";
     public Role Role { get; set; } = Role.User;
+    public Gender Gender { get; set; }
     public bool IsDisabled { get; set; } = false;
 
     public ICollection<Category> FavouriteCategories = new Collection<Category>();

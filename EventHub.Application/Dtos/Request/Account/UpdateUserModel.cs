@@ -10,5 +10,6 @@ public record UpdateUserModel(
     string? Email,
     [MaxLength(15)]
     string? PhoneNumber,
+    Gender Gender,
     string? ImageUrl
 );
