@@ -1,9 +1,41 @@
 ﻿@using EventHub.Application.Services;
+@using EventHub.Domain.Entities;
+@using EventHub.Domain.Enums;
+@using System.Globalization;
 @inject ICategoryService CategoryService
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    var badgeClasses = new List<string>
+    {
+        "bg-blue-100 text-blue-800 font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300",
+        "bg-gray-100 text-gray-800 font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300",
+        "bg-red-100 text-red-800 font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300",
+        "bg-green-100 text-green-800 font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300",
+        "bg-yellow-100 text-yellow-800 font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300",
+        "bg-indigo-100 text-indigo-800 font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300",
+        "bg-purple-100 text-purple-800 font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300",
+        "bg-pink-100 text-pink-800 font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-pink-900 dark:text-pink-300",
+    };
+    int badgeIndex = Random.Shared.Next(0, badgeClasses.Count);
+
+    var categories = ViewBag.Categories as List<Category> ?? new List<Category>();
+
+    var countries = CultureInfo.GetCultures(CultureTypes.SpecificCultures)
+            .Select(culture => new RegionInfo(culture.Name))
+            .GroupBy(region => region.Name)
+            .Select(group => new
+            {
+                Code = group.Key,
+                Name = group.First().EnglishName,
+                CurrencyCode = group.First().ISOCurrencySymbol,
+                CurrencyName = group.First().CurrencyEnglishName
+            })
+            .OrderBy(country => country.Name)
+            .ToList();
+
+    var currencies = countries.DistinctBy(x => x.CurrencyCode).ToList();
 }
 <form asp-action="create" asp-controller="event" method="post" class="lg:max-w-[60rem] w-full mx-auto mt-[4rem]">
     <div class="p-6 space-y-2">
@@ -28,15 +60,237 @@
         <button type="button" disabled id="deleteImage" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
     </div>
     <div class="px-6 mb-2">
-        <label for="title" class="block mb-2 text-md font-medium text-gray-900 dark:text-white">Title</label>
-        <input name="Title" type="text" id="title" class="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Title of your event" required>
+        <label for="title" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Title</label>
+        <input name="Title" autocomplete="on" type="text" id="title" class="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Title of your event" required>
     </div>
     <div class="px-6 mb-2">
-        <label for="description" class="block mb-2 text-md font-medium text-gray-900 dark:text-white">Description</label>
+        <label for="description" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Description (Soon I'll try add markdown to format the text)</label>
         <textarea name="Description" id="description" class="h-[10rem] bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Description of your event" required></textarea>
     </div>
-    <div class="px-6 mb-2"></div>
+    <div class="grid grid-cols-2 sm:grid-cols-1">
+        <div class="px-6 mb-2">
+            <label for="city" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">City</label>
+            <input name="City" autocomplete="on" type="text" id="city" class="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="City" required>
+        </div>
+        <div class="px-6 mb-2">
+            <label for="country" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Country</label>
+            <select id="country" name="Country" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option value="" selected>--- Select Country ---</option>
+                @foreach (var country in countries)
+                {
+                    <option value="@country.Code">@country.Name</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="px-6 mb-2">
+        <label for="address" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Address</label>
+        <input name="Address" autocomplete="on" type="text" id="address" class="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Address">
+    </div>
+    
+    <div class="grid grid-cols-3 md:grid-cols-2 sm:grid-cols-1">
+        <div class="px-6 mb-2">
+            <label for="currency" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Currency</label>
+            <select id="currency" name="Currency" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                <option value="" selected>--- Select Currency ---</option>
+                @foreach (var currency in currencies)
+                {
+                    <option value="@currency.CurrencyCode">@currency.CurrencyCode | @currency.CurrencyName</option>
+                }
+            </select>
+        </div>
+        <div class="px-6 mb-2">
+            <label for="format" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Format</label>
+            <select id="format" name="Format" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                @foreach (var f in (Format[])Enum.GetValues(typeof(Format)))
+                {
+                    <option value="@f">@f</option>
+                }
+            </select>
+        </div>
+        <div class="px-6 mb-2">
+            <label for="ageRestriction" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Age Restriction</label>
+            <input name="AgeRestriction" type="number" id="ageRestriction" class="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Age Restriction">
+        </div>
+    </div>
+    <div class="px-6 mb-2">
+        <label for="categories" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Categories</label>
+        <div class="flex flex-wrap">
+            @for (int i = 0; i < categories.Count; i++)
+            {
+                <span class="flex items-center m-1 @badgeClasses[badgeIndex]">
+                    <input id="@categories[i].Id" type="checkbox" name="Categories" value="@categories[i].Id" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    <label for="@categories[i].Id" class="ml-2 text-md font-medium text-gray-900 dark:text-gray-300">@categories[i].Name</label>
+                </span>
+
+                badgeIndex++;
+                if (badgeIndex == badgeClasses.Count)
+                {
+                    badgeIndex = 0;
+                }
+            }
+        </div>
+    </div>
+    <div class="px-6 mb-2">
+            <label class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Start & End Dates</label>
+        <div class="flex items-center justify-center w-full">
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                         viewBox="0 0 20 20">
+                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                    </svg>
+                </div>
+                <input name="start" type="datetime-local" @*datepicker datepicker-format="dd/mm/yyyy"*@
+                       class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block pl-10 p-2  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                       placeholder="Start Date" required>
+            </div>
+            <span class="mx-2 text-lg text-gray-500">to</span>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                         viewBox="0 0 20 20">
+                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                    </svg>
+                </div>
+                <input name="end" type="datetime-local" @*datepicker datepicker-format="dd/mm/yyyy"*@
+                       class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block pl-10 p-2  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                       placeholder="End date">
+            </div>
+        </div>
+    </div>
+    
+    <div class="px-6 mb-2">
+            <label class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Registration Start & End Dates (Optional, If you dont have one leave empty)</label>
+        <div class="flex items-center justify-center w-full">
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                         viewBox="0 0 20 20">
+                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                    </svg>
+                </div>
+                <input name="start" type="datetime-local" @*datepicker datepicker-format="dd/mm/yyyy"*@
+                       class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block pl-10 p-2  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                       placeholder="Start Date">
+            </div>
+            <span class="mx-2 text-lg text-gray-500">to</span>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                         viewBox="0 0 20 20">
+                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                    </svg>
+                </div>
+                <input name="end" type="datetime-local" @*datepicker datepicker-format="dd/mm/yyyy"*@
+                       class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block pl-10 p-2  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                       placeholder="End date">
+            </div>
+        </div>
+    </div>
+
+    <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+    
+    <div class="px-6 mb-2">
+        <h2 class="text-2xl lg:text-3xl text-gray-900 dark:text-white font-semibold">Tickets & Admission</h2>
+        <input id="ticketsJsonInput" type="text" name="TicketsJson" hidden />
+        <div id="ticketsPreview" class="space-y-8 lg:grid grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0">
+            
+        </div>
+        <div class="hidden">
+            <!-- Pricing Card -->
+            <div id="ticketTemplate" class="flex flex-col mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
+                <h3 class="mb-4 text-2xl font-semibold">Ticket</h3>
+                <p class="font-light text-gray-500 sm:text-lg dark:text-gray-400">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam, quas voluptatibus ex culpa ipsum, asperiores
+                </p>
+
+                <div class="flex justify-center items-baseline my-3">
+                    <span class="mr-2 text-3xl font-semibold">Free</span>
+                </div>
+                <!-- List -->
+                <ul role="list" class="mb-8 space-y-4 text-left">
+                    <li class="flex items-center space-x-3">
+                        <!-- Icon -->
+                        <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                             viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clip-rule="evenodd"></path>
+                        </svg>
+                        <span>Feature text</span>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        <div class="flex justify-center m-5">
+            <button id="updateProductButton" data-modal-toggle="updateProductModal" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Add Ticket</button>
+        </div>
+    </div>
+    <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+
+    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        Add Event
+    </button>
 </form>
+
+
+<!-- Main modal -->
+<div id="updateProductModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
+    <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
+        <!-- Modal content -->
+        <div class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
+            <!-- Modal header -->
+            <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Add Ticket</h3>
+                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="updateProductModal">
+                    <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <form action="#" id="newTicketForm">
+                <div class="grid gap-4 mb-4 sm:grid-cols-2">
+                    <div>
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                        <input type="text" name="name" id="name" value="General Admission" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Ticket name">
+                    </div>
+                    <div>
+                        <label for="price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price (If You Need a Free One Leave Empty)</label>
+                        <input type="number" value="0" name="price" id="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                    </div>
+                    <div>
+                        <label for="quantity" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quantity</label>
+                        <input type="number" value="0" name="quantity" id="quantity" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="features" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Features (max 7, separate each by ";"(semicolon))</label>
+                        <input id="features" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Write main features"/>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="ticket-description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
+                        <textarea id="ticket-description" rows="5" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Write a description..."></textarea>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Add Ticket
+                    </button>
+                    <button type="button" class="text-red-600 inline-flex items-center hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
+                        <svg class="mr-1 -ml-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                        Delete
+                    </button>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+</div>
 
 @section Head {
 @*     <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
@@ -49,6 +303,69 @@
     @* <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script> *@
 
     <script>
-        // var simplemde = new SimpleMDE({ element: document.getElementById("description") });
+        const ticketsJsonInput = document.getElementById('ticketsJsonInput');
+        const newTicketForm = document.getElementById('newTicketForm');
+        const ticketPreview = document.getElementById('ticketsPreview');
+        const ticketTemplate = document.getElementById('ticketTemplate');
+
+        document.addEventListener("DOMContentLoaded", function (event) {
+            document.getElementById('updateProductButton').click();
+        });
+
+        var tickets = [];
+        newTicketForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            addTicket();
+        });
+
+        function addTicket() {
+            const ticket = {
+                Name: document.getElementById('name').value,
+                Price: parseFloat(document.getElementById('price').value) ,
+                Quantity: parseInt(document.getElementById('quantity').value),
+                Features: document.getElementById('features').value.split(";").slice(0, 7),
+                Description: document.getElementById('ticket-description').value
+            };
+
+            tickets.push(ticket);
+            console.log(tickets);
+            ticketsJsonInput.value = JSON.stringify(tickets);
+            var newTicket = `<div id="ticketTemplate" class="flex flex-col mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
+                        <h3 class="mb-4 text-2xl font-semibold">${ticket.Name} (Q - ${ticket.Quantity}</h3>
+                        <p class="font-light text-gray-500 sm:text-lg dark:text-gray-400">${ticket.Description}</p>
+
+                        <div class="flex justify-center items-baseline my-3">
+                            <span class="mr-2 text-3xl font-semibold">${ticket.Price}</span>
+                        </div>
+                        <!-- List -->
+                        <ul role="list" class="mb-8 space-y-4 text-left">`
+
+            ticket.Features.forEach(feature => {
+                newTicket += `<li class="flex items-center space-x-3">
+                                        <!-- Icon -->
+                                        <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                                             viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                  clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>${feature}</span>
+                                    </li>`
+            })
+
+            newTicket += `</ul>
+                            </div>`;
+
+            ticketPreview.innerHTML += newTicket;
+
+            document.getElementById('price').value = 0;
+            document.getElementById('quantity').value = 0;
+            document.getElementById('features').value = '';
+            document.getElementById('name').value = '';
+            document.getElementById('ticket-description').value = '';
+        }
+
+
+
     </script>
 }

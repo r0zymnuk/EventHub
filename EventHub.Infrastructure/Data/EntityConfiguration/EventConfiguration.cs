@@ -30,9 +30,8 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
 
         builder.OwnsOne(e => e.Location);
 
-        builder.HasMany(e => e.Categories);
-
-        builder.HasMany(e => e.Tickets);
+        builder.HasMany(e => e.Tickets)
+            .WithOne(t => t.Event);
 
         builder.Property(e => e.Currency)
             .IsRequired()

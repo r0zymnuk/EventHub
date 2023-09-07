@@ -1,4 +1,5 @@
 ﻿using EventHub.Application.Dtos;
+using EventHub.Application.Dtos.Request.Event;
 using EventHub.Application.Services;
 using EventHub.Domain.Entities;
 using EventHub.WebUI.Models;
@@ -12,10 +13,12 @@ namespace EventHub.WebUI.Controllers;
 public class EventController : Controller
 {
     private readonly IEventService _eventService;
+    private readonly ICategoryService _categoryService;
 
-    public EventController(IEventService eventService)
+    public EventController(IEventService eventService, ICategoryService categoryService)
     {
         _eventService = eventService;
+        _categoryService = categoryService;
     }
 
     [HttpGet("id/{eventId:guid}")]
@@ -38,14 +41,16 @@ public class EventController : Controller
 
     [Route("create")]
     [Authorize]
-    public async Task<IActionResult> Create()
+    public async Task<IActionResult> Create(CreateEventModel createEvent)
     {
         if (Request.Method == "POST")
         {
-            var @event = new Event();
-            await _eventService.CreateEventAsync(@event);
+            await _eventService.CreateEventAsync(createEvent);
             return RedirectToAction("AllEvents");
         }
+
+        var categories = await _categoryService.GetCategoriesAsync();
+        ViewBag.Categories = categories;
 
         return View();
     }

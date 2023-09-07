@@ -8,7 +8,6 @@ public class AutoMapper : Profile
 {
     public AutoMapper()
     {
-        CreateMap<AddEventDto, Event>();
         CreateMap<Event, GetEventDto>();
         CreateMap<Event, EventModel>()
             .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location.ToString()));

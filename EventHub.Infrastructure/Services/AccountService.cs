@@ -36,6 +36,7 @@ public class AccountService : IAccountService
         var user = await _context.Users
             .Include(u => u.Tickets)
             .Include(u => u.EnteredEvents)
+            .Include(u => u.OrganizedEvents)
             .FirstOrDefaultAsync(u => u.Id == userId);
         return _mapper.Map<UserViewModel>(user);
     }
