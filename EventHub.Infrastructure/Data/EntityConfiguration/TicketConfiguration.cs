@@ -27,5 +27,10 @@ public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
 
         builder.Property(t => t.Quantity)
             .IsRequired();
+
+        builder.Property(t => t.Sold);
+
+        builder.HasOne(t => t.Event)
+            .WithMany(e => e.Tickets);
     }
 }

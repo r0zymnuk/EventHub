@@ -26,7 +26,7 @@
         CultureInfo.GetCultures(CultureTypes.SpecificCultures)
             .Where(x => { try { _ = new RegionInfo(x.LCID); return true; } catch { return false; }})
             .ToLookup(x => new RegionInfo(x.LCID).ISOCurrencySymbol);
-    var culture = cultureByCurrency[Model.Currency].First();
+    var culture = cultureByCurrency[Model.Currency].FirstOrDefault();
 }
 
 <div class="mt-[4rem] h-96 items-center bg-[url('@imageUrl')] bg-center bg-cover">
@@ -45,7 +45,7 @@
                                 d="M13.8 12.938h-.01a7 7 0 1 0-11.465.144h-.016l.141.17c.1.128.2.252.3.372L8 20l5.13-6.248c.193-.209.373-.429.54-.66l.13-.154Z" />
                         </g>
                     </svg>
-                    @Model.Location.ToString()
+                    @Model.Location.City @Model.Location.Country
                 </span>
                 <span
                     class="flex basis-1/2 justify-end gap-4 items-center mb-3 font-normal text-gray-700 dark:text-gray-400 float-right text-right"
@@ -141,7 +141,16 @@
                             }
                             <div class="flex justify-center items-baseline my-8">
                                 @* <span class="mr-2 text-5xl font-semibold">@ticket.Price.ToString($"{0} {Model.Currency}")</span> *@
-                                <span class="mr-2 text-5xl font-semibold">@string.Format(new CultureInfo(culture.Name), "{0:C2}", ticket.Price)</span>
+                                <span class="mr-2 text-5xl font-semibold">
+                                    @if(culture is not null)
+                                    {
+                                        string.Format(new CultureInfo(culture.Name), "{0:C2}", ticket.Price);
+                                    }
+                                    else
+                                    {
+                                        ticket.Price.ToString($"{0:C2} {Model.Currency}");
+                                    }
+                                </span>
                             </div>
                             <!-- List -->
                             <ul role="list" class="mb-8 space-y-4 text-left">
@@ -196,7 +205,7 @@
                             Home address
                         </dt>
                         <dd class=" font-semibold">
-                            @Model.Location
+                            @Model.Location.ToFullString()
                         </dd>
                     </div>
                     <div class="flex flex-col pt-3">

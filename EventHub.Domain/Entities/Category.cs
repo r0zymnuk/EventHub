@@ -9,4 +9,8 @@ public class Category
     public Category? ParentCategory { get; set; }
 
     public IEnumerable<Category> SubCategories = new Collection<Category>();
+
+    public ICollection<Event> Events { get; set; } = new List<Event>();
+    public ICollection<Tour> Tours { get; set; } = new List<Tour>();
+    public ICollection<User> Users { get; set; } = new List<User>();
 }

@@ -21,5 +21,14 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
 
         builder.HasOne(c => c.ParentCategory)
             .WithMany(c => c.SubCategories);
+
+        builder.HasMany(c => c.Events)
+            .WithMany(e => e.Categories);
+
+        builder.HasMany(c => c.Tours)
+            .WithMany(t => t.Categories);
+
+        builder.HasMany(c => c.Users)
+            .WithMany(u => u.FavouriteCategories);
     }
 }

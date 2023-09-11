@@ -110,7 +110,6 @@
         </ul>
     </div>
     <div id="myTabContent">
-        @* Create endpoint and controller to handle account update *@
         <form method="post" asp-controller="Account" asp-action="UpdateAccount"  class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="profile" role="tabpanel"
              aria-labelledby="profile-tab">
 
@@ -155,23 +154,31 @@
                        class="bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                        placeholder="@Model.Email">
             </div>
-            <div class="mb-6 mx-auto w-full max-w-[40rem]">
-                <label for="gender" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">
-                    Gender
-                </label>
-                <select id="gender" name="gender" class="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    @foreach (var g in genders)
-                    {
-                        if ((int)g.Key == (int)Model.Gender)
+            <div class="mb-6 mx-auto w-full max-w-[40rem] grid grid-cols-1 lg:grid-cols-2 space-x-6">
+                <div>
+                    <label for="gender" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">
+                        Gender
+                    </label>
+                    <select id="gender" name="gender" class="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        @foreach (var g in genders)
                         {
-                            <option value="@g.Key" selected>@g.Value</option>
+                            if ((int)g.Key == (int)Model.Gender)
+                            {
+                                <option value="@g.Key" selected>@g.Value</option>
+                            }
+                            else
+                            {
+                                <option value="@g.Key">@g.Value</option>
+                            }
                         }
-                        else
-                        {
-                            <option value="@g.Key">@g.Value</option>
-                        }
-                    }
-                </select>
+                    </select>
+                </div>
+                <div>
+                    <label for="age" class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">
+                        Age
+                    </label>
+                    <input name="Age" type="number" id="age" class="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Age" value="@Model.Age">
+                </div>
             </div>
             <div class="mb-6 mx-auto w-full max-w-[40rem]">
                 <label class="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Favourite Categories</label>
@@ -194,48 +201,23 @@
         </form>
         <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white" id="entered" role="tabpanel"
              aria-labelledby="entered-tab">
-            <h3 class="mx-auto text-xl font-semibold mb-1 max-w-[40rem]">Entered Events: @Model.EnteredEvents.Count()</h3>
-            @if (Model.EnteredEvents.Count() == 0)
-            {
-                <div class="mx-auto mb-1 max-w-[40rem]">
-                    <p class="text-md font-normal mb-5 text-gray-900 dark:text-white/70">You haven't entered any events yet.</p>
-                    <a asp-controller="Event" asp-action="AllEvents" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Browse events</a>
-                </div>
-            }
-            else
-            {
+            <div class="max-w-[40rem] mx-auto">
+                <span class="flex flex-row justify-between">
+                    <h3 class="text-xl font-semibold mb-1">Entered Events: @Model.EnteredEvents.Count()</h3>
+                    <a asp-controller="Event" asp-action="AllEvents" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Browse events</a>
+                </span>
+                @if (Model.EnteredEvents.Count() == 0)
+                {
+                    <div class="mx-auto mb-1 max-w-[40rem]">
+                        <p class="text-md font-normal mb-5 text-gray-900 dark:text-white/70">You haven't entered any events yet.</p>
+                        
+                    </div>
+                }
                 @foreach (var e in Model.EnteredEvents)
                 {
-                    <a asp-controller="Event" asp-action="Id" asp-route-eventId="@e.Id" class="mt-4 max-w-[40rem] mx-auto flex flex-col sm:flex-row items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 sm:h-36 md:h-48">
-                        <img class="object-cover sm:h-full sm:w-56 xs:w-full md:rounded-none md:rounded-l-lg" src="@e.ImageUrl"
-                             alt="">
-                        <div class="p-4 leading-normal h-full">
-                            <span class="bg-blue-100 text-blue-800 text-md font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">**Tickets Count**</span>
-                            <h5 class="mb-3 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">@e.Title</h5>
-                            <span class="flex gap-4 text-lg items-center mb-3 font-normal text-gray-700 dark:text-gray-400"
-                                  style="text-overflow: ellipsis;">
-                                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                     viewBox="0 0 17 21">
-                                    <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
-                                        <path d="M8 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
-                                        <path d="M13.8 12.938h-.01a7 7 0 1 0-11.465.144h-.016l.141.17c.1.128.2.252.3.372L8 20l5.13-6.248c.193-.209.373-.429.54-.66l.13-.154Z" />
-                                    </g>
-                                </svg>
-                                @e.Location
-                            </span>
-                            <span class="flex gap-4 text-lg items-center font-normal text-gray-700 dark:text-gray-400">
-                                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                     viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                          stroke-width="1.5"
-                                          d="M5 1v3m5-3v3m5-3v3M1 7h18M5 11h10M2 3h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
-                                </svg>
-                                @e.Start.ToString("dd MMM yyyy")
-                            </span>
-                        </div>
-                    </a>
+                    @await Component.InvokeAsync("EventCard", new { eventModel = e, controls = false })
                 }
-            }
+            </div>
         </div>
         <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="settings" role="tabpanel"
              aria-labelledby="settings-tab">
@@ -249,48 +231,26 @@
         </div>
         <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="organized" role="tabpanel"
              aria-labelledby="organized-tab">
-            <h3 class="mx-auto text-xl font-semibold mb-1 max-w-[40rem] text-gray-900 dark:text-white">Organized Events: @Model.OrganizedEvents.Count()</h3>
-            @if (Model.OrganizedEvents.Count() == 0)
-            {
-                
-                <div class="mx-auto mb-1 max-w-[40rem]">
-                    <p class="text-lg font-normal text-gray-900 dark:text-white/70 mb-5">You have not organized any events yet.</p>
+            <div class="max-w-[40rem] mx-auto">
+                <span class="flex flex-row justify-between">
+                    <h3 class="text-xl font-semibold mb-1 text-gray-900 dark:text-white">Organized Events: @Model.OrganizedEvents.Count()</h3>
                     <a asp-controller="Event" asp-action="Create" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Create new Event</a>
-                </div>
-            }
-            else
-            {
+                </span>
+                
+                
+                @if (Model.OrganizedEvents.Count() == 0)
+                {
+
+                    <div class="mx-auto mb-1 max-w-[40rem]">
+                        <p class="text-lg font-normal text-gray-900 dark:text-white/70 mb-5">You have not organized any events yet.</p>
+
+                    </div>
+                }
                 @foreach (var e in Model.OrganizedEvents)
                 {
-                    <a asp-controller="Event" asp-action="Id" asp-route-eventId="@e.Id" class="flex flex-col sm:flex-row items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 sm:h-36 md:h-48">
-                        <img class="object-cover sm:h-full sm:w-56 xs:w-full md:rounded-none md:rounded-l-lg" src="@e.ImageUrl"
-                             alt="">
-                        <div class="p-4 leading-normal h-full">
-                            <h5 class="mb-3 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">@e.Title</h5>
-                            <span class="flex gap-4 text-lg items-center mb-3 font-normal text-gray-700 dark:text-gray-400"
-                                  style="text-overflow: ellipsis;">
-                                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                     viewBox="0 0 17 21">
-                                    <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
-                                        <path d="M8 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
-                                        <path d="M13.8 12.938h-.01a7 7 0 1 0-11.465.144h-.016l.141.17c.1.128.2.252.3.372L8 20l5.13-6.248c.193-.209.373-.429.54-.66l.13-.154Z" />
-                                    </g>
-                                </svg>
-                                @e.Location
-                            </span>
-                            <span class="flex gap-4 text-lg items-center font-normal text-gray-700 dark:text-gray-400">
-                                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                     viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                          stroke-width="1.5"
-                                          d="M5 1v3m5-3v3m5-3v3M1 7h18M5 11h10M2 3h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
-                                </svg>
-                                @e.Start.ToString("dd MMM yyyy")
-                            </span>
-                        </div>
-                    </a>
+                    @await Component.InvokeAsync("EventCard", new { eventModel = e, controls = true })
                 }
-            }
+            </div>
         </div>
     </div>
 </div>

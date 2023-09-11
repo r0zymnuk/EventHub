@@ -37,4 +37,9 @@ public class Location
     {
         return $"{City}, {CountryCode}";
     }
+
+    public string ToFullString()
+    {
+        return $"{Address}, {City}, {Country}";
+    }
 }

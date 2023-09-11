@@ -13,4 +13,5 @@ public class Ticket : BaseEntity
     public int Sold { get; set; }
     public decimal Price { get; set; } = 0;
     public bool IsFree { get; set; } = false;
+    public Event Event { get; set; } = null!;
 }

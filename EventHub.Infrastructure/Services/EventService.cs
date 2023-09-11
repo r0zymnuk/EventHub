@@ -1,43 +1,107 @@
 ﻿using AutoMapper;
 using EventHub.Application.Dtos;
+using EventHub.Application.Dtos.Request.Event;
 using EventHub.Application.Dtos.Response.Event;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace EventHub.Infrastructure.Services;
 
 public class EventService : IEventService
 {
-    private readonly ApplicationDbContext context;
-    private readonly IMapper mapper;
+    private readonly ApplicationDbContext _context;
+    private readonly IMapper _mapper;
+    private readonly IAccountService _accountService;
 
-    public EventService(ApplicationDbContext context, IMapper mapper)
+    public EventService(ApplicationDbContext context, IMapper mapper, IAccountService accountService)
     {
-        this.context = context;
-        this.mapper = mapper;
+        _context = context;
+        _mapper = mapper;
+        _accountService = accountService;
     }
 
-    public Task<Event> CreateEventAsync(Event @event)
+    public async Task<Event> CreateEventAsync(CreateEventModel @event)
     {
-        throw new NotImplementedException();
+        var tickets = ParseJsonTickets(@event.TicketsJson);
+        if (tickets.Count == 0)
+        {
+            tickets.Add(new Ticket
+            {
+                Name = "Free",
+                Description = "Default Admission Ticket",
+                Quantity = 50,
+                Price = 0,
+                IsFree = true,
+                Features = new List<Feature>()
+            });
+        }
+        var newEvent = new Event
+        {
+            ImageUrl = @event.ImageUrl ?? "",
+            Title = @event.Title,
+            Description = string.IsNullOrWhiteSpace(@event.Description) ? "" : @event.Description,
+            RegistrationStart = @event.RegistrationStart,
+            RegistrationEnd = @event.RegistrationEnd,
+            Start = @event.Start,
+            End = @event.End,
+            Location = new Location(@event.Country, @event.City, @event.Address ?? ""),
+            Format = @event.Format,
+            IsPrivate = @event.IsPrivate,
+            AgeRestriction = @event.AgeRestriction,
+            Capacity = @event.Capacity == 0 ? tickets.Select(t => t.Quantity).Sum() : @event.Capacity,
+            Currency = @event.Currency,
+        };
+        var currentUser = await _context.Users.Include(u => u.OrganizedEvents).FirstOrDefaultAsync(u => u.Id == _accountService.GetUserId());
+        if (currentUser is null)
+        {
+            return null!;
+        }
+        newEvent.Organizer = currentUser;
+        using var transaction = _context.Database.BeginTransaction();
+
+        _context.Events.Add(newEvent);
+        newEvent.Categories = _context.Categories.Where(c => @event.Categories.Contains(c.Id)).ToList();
+        newEvent.Tickets = tickets;
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        return newEvent;
     }
 
-    public Task<Event> DeleteEventAsync(Guid eventId)
+    public async Task<Event> DeleteEventAsync(Guid eventId)
     {
-        throw new NotImplementedException();
+        var currentUser = await _context.Users.Include(u => u.OrganizedEvents).FirstOrDefaultAsync(u => u.Id == _accountService.GetUserId());
+        if (currentUser is null)
+        {
+            return null!;
+        }
+        var @event = await _context.Events.FindAsync(eventId);
+        if (@event is null)
+        {
+            return null!;
+        }
+        using var transaction = _context.Database.BeginTransaction();
+        currentUser.OrganizedEvents.Remove(@event);
+        _context.Events.Remove(@event);
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        return @event;
     }
 
     public async Task<EventModel?> GetEventByIdAsync(Guid eventId)
     {
-        var @event = await context.Events
+        var @event = await _context.Events
             .Include(e => e.Tickets)
             .Include(e => e.Categories)
             .FirstOrDefaultAsync(e => e.Id == eventId);
-        return mapper.Map<EventModel>(@event);
+        return _mapper.Map<EventModel>(@event);
     }
 
     public async Task<List<EventCardModel>> GetEventsAsync(EventFilters? filters = null, int take = 12, int skip = 0)
     {
-        var events = context.Events
+        var events = _context.Events
             .Where(e => e.Start >= DateTime.Now && !e.IsPrivate);
 
         if (filters is not null)
@@ -140,7 +204,7 @@ public class EventService : IEventService
         var eventCards = await events
             .Skip(skip)
             .Take(take)
-            .Select(e => mapper.Map<EventCardModel>(e))
+            .Select(e => _mapper.Map<EventCardModel>(e))
             .ToListAsync();
 
         return eventCards;
@@ -149,5 +213,51 @@ public class EventService : IEventService
     public Task<Event> UpdateEventAsync(Guid eventId, Event @event)
     {
         throw new NotImplementedException();
+    }
+
+    static List<Ticket> ParseJsonTickets(string ticketsJson)
+    {
+        var tickets = new List<Ticket>();
+        if (string.IsNullOrWhiteSpace(ticketsJson))
+        {
+            return tickets;
+        }
+        var ticketsInter = JsonConvert.DeserializeObject<List<TicketIntermediate>>(ticketsJson.Trim());
+        if (ticketsInter is null)
+        {
+            return tickets;
+        }
+        Ticket t;
+        foreach (var tInter in ticketsInter)
+        {
+            t = new()
+            {
+                Name = tInter.Name,
+                Description = tInter.Description,
+                Quantity = tInter.Quantity,
+                Price = tInter.Price,
+                IsFree = tInter.Price == 0,
+                Features = new List<Feature>()
+            };
+            
+            foreach (var fString in tInter.Features)
+            {
+                t.Features.Add(new Feature { Name = fString });
+            }
+
+            tickets.Add(t);
+        }
+
+        return tickets;
+    }
+
+    class TicketIntermediate
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public List<string> Features { get; set; } = new();
+        public int Quantity { get; set; }
+        public int Sold { get; set; }
+        public decimal Price { get; set; } = 0;
     }
 }

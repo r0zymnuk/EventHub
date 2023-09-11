@@ -3,7 +3,7 @@ public record EventModel(
     Guid Id,
     string Title,
     string Description,
-    string Location,
+    Location Location,
     DateTime Start,
     DateTime End,
     string ImageUrl,

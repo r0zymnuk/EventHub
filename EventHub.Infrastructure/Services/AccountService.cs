@@ -36,7 +36,17 @@ public class AccountService : IAccountService
         var user = await _context.Users
             .Include(u => u.Tickets)
             .Include(u => u.EnteredEvents)
+            .Include(u => u.OrganizedEvents)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user is null)
+        {
+            return null!;
+        }
+
+        user.OrganizedEvents = user.OrganizedEvents.OrderBy(e => e.Start).ToList();
+
         return _mapper.Map<UserViewModel>(user);
     }
 
@@ -95,6 +105,10 @@ public class AccountService : IAccountService
         if (!string.IsNullOrWhiteSpace(update.PhoneNumber))
         {
             user.PhoneNumber = update.PhoneNumber;
+        }
+        if (update.Age != user.Age)
+        {
+            user.Age = update.Age;
         }
         if (!string.IsNullOrWhiteSpace(update.ImageUrl))
         {

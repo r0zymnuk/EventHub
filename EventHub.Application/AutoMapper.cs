@@ -2,18 +2,18 @@
 using EventHub.Application.Dtos.Response;
 using EventHub.Application.Dtos.Response.Account.User;
 using EventHub.Application.Dtos.Response.Event;
+using EventHub.Domain.Entities;
 
 namespace EventHub.Application;
 public class AutoMapper : Profile
 {
     public AutoMapper()
     {
-        CreateMap<AddEventDto, Event>();
         CreateMap<Event, GetEventDto>();
         CreateMap<Event, EventModel>()
-            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location.ToString()));
+        .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => string.IsNullOrWhiteSpace(src.ImageUrl) ? "https://via.placeholder.com/600x400?text=No%20Image" : src.ImageUrl));
         CreateMap<Event, EventCardModel>()
-            .ConvertUsing(src => CardFromEvent(src));
+        .ConvertUsing(src => CardFromEvent(src));
 
         CreateMap<RegisterUserModel, User>();
         CreateMap<User, UserViewModel>();
