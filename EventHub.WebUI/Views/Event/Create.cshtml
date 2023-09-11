@@ -65,9 +65,9 @@
     </div>
     <div class="px-6 mb-2">
         <label for="description" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">Description (Soon I'll try add markdown to format the text)</label>
-        <textarea name="Description" id="description" class="h-[10rem] bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Description of your event" required></textarea>
+        <textarea name="Description" id="description" class="h-[10rem] bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Description of your event"></textarea>
     </div>
-    <div class="grid grid-cols-2 sm:grid-cols-1">
+    <div class="grid grid-cols-1 md:grid-cols-2">
         <div class="px-6 mb-2">
             <label for="city" class="block mb-2 text-xl font-medium text-gray-900 dark:text-white">City</label>
             <input name="City" autocomplete="on" type="text" id="city" class="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="City" required>
@@ -78,7 +78,7 @@
                 <option value="" selected>--- Select Country ---</option>
                 @foreach (var country in countries)
                 {
-                    <option value="@country.Code">@country.Name</option>
+                    <option value="@country.Name">@country.Name</option>
                 }
             </select>
         </div>
@@ -197,7 +197,7 @@
     
     <div class="px-6 mb-2">
         <h2 class="text-2xl lg:text-3xl text-gray-900 dark:text-white font-semibold">Tickets & Admission</h2>
-        <input id="ticketsJsonInput" type="text" name="TicketsJson" hidden />
+        <input id="ticketsJsonInput" type="text" value=" " name="TicketsJson" hidden />
         <div id="ticketsPreview" class="space-y-8 lg:grid grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0">
             
         </div>

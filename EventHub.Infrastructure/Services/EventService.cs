@@ -24,11 +24,23 @@ public class EventService : IEventService
     public async Task<Event> CreateEventAsync(CreateEventModel @event)
     {
         var tickets = ParseJsonTickets(@event.TicketsJson);
+        if (tickets.Count == 0)
+        {
+            tickets.Add(new Ticket
+            {
+                Name = "Free",
+                Description = "Default Admission Ticket",
+                Quantity = 50,
+                Price = 0,
+                IsFree = true,
+                Features = new List<Feature>()
+            });
+        }
         var newEvent = new Event
         {
             ImageUrl = @event.ImageUrl ?? "",
             Title = @event.Title,
-            Description = @event.Description,
+            Description = string.IsNullOrWhiteSpace(@event.Description) ? "" : @event.Description,
             RegistrationStart = @event.RegistrationStart,
             RegistrationEnd = @event.RegistrationEnd,
             Start = @event.Start,
@@ -46,25 +58,31 @@ public class EventService : IEventService
             return null!;
         }
         newEvent.Organizer = currentUser;
-        //using var transaction = _context.Database.BeginTransaction();
+        using var transaction = _context.Database.BeginTransaction();
 
         _context.Events.Add(newEvent);
         newEvent.Categories = _context.Categories.Where(c => @event.Categories.Contains(c.Id)).ToList();
         newEvent.Tickets = tickets;
         await _context.SaveChangesAsync();
-        //await transaction.CommitAsync();
-        
+        await transaction.CommitAsync();
+
         return newEvent;
     }
 
     public async Task<Event> DeleteEventAsync(Guid eventId)
     {
+        var currentUser = await _context.Users.Include(u => u.OrganizedEvents).FirstOrDefaultAsync(u => u.Id == _accountService.GetUserId());
+        if (currentUser is null)
+        {
+            return null!;
+        }
         var @event = await _context.Events.FindAsync(eventId);
         if (@event is null)
         {
             return null!;
         }
         using var transaction = _context.Database.BeginTransaction();
+        currentUser.OrganizedEvents.Remove(@event);
         _context.Events.Remove(@event);
         await _context.SaveChangesAsync();
         await transaction.CommitAsync();
@@ -200,7 +218,11 @@ public class EventService : IEventService
     static List<Ticket> ParseJsonTickets(string ticketsJson)
     {
         var tickets = new List<Ticket>();
-        var ticketsInter = JsonConvert.DeserializeObject<List<TicketIntermediate>>(ticketsJson);
+        if (string.IsNullOrWhiteSpace(ticketsJson))
+        {
+            return tickets;
+        }
+        var ticketsInter = JsonConvert.DeserializeObject<List<TicketIntermediate>>(ticketsJson.Trim());
         if (ticketsInter is null)
         {
             return tickets;

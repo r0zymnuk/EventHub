@@ -55,6 +55,15 @@ public class EventController : Controller
         return View();
     }
 
+    [Route("delete/{eventId:guid}")]
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> Delete(Guid eventId)
+    {
+        await _eventService.DeleteEventAsync(eventId);
+        return RedirectToAction("AllEvents");
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

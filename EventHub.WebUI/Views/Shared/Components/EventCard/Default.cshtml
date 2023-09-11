@@ -1,0 +1,92 @@
+﻿@using EventHub.Application.Dtos.Response.Event;
+@using EventHub.WebUI.ViewComponents;
+@model EventCardViewModel
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var e = Model.Event;
+}
+@if (Model.Controls == false)
+{
+    <a asp-controller="Event" asp-action="Id" asp-route-eventId="@e.Id" class="flex flex-col sm:flex-row my-2 items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 sm:h-36 md:h-48">
+        <img class="object-cover sm:h-full sm:w-56 xs:w-full md:rounded-none md:rounded-l-lg" src="@e.ImageUrl" alt="">
+        <div class="p-4 leading-normal h-full">
+            <h5 class="mb-3 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">@e.Title</h5>
+            <span class="flex gap-4 text-lg items-center mb-3 font-normal text-gray-700 dark:text-gray-400"
+                  style="text-overflow: ellipsis;">
+                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 17 21">
+                    <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                        <path d="M8 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                        <path d="M13.8 12.938h-.01a7 7 0 1 0-11.465.144h-.016l.141.17c.1.128.2.252.3.372L8 20l5.13-6.248c.193-.209.373-.429.54-.66l.13-.154Z" />
+                    </g>
+                </svg>
+                @e.Location
+            </span>
+            <span class="flex gap-4 text-lg items-center font-normal text-gray-700 dark:text-gray-400">
+                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                          stroke-width="1.5"
+                          d="M5 1v3m5-3v3m5-3v3M1 7h18M5 11h10M2 3h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
+                </svg>
+                @e.Start.ToString("dd MMM yyyy")
+            </span>
+        </div>
+        
+    </a>
+}
+else
+{
+    <a asp-controller="Event" asp-action="Id" asp-route-eventId="@e.Id" class="flex flex-col sm:flex-row my-2 items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 sm:h-36 md:h-48">
+        <img class="object-cover sm:h-full sm:w-56 xs:w-full md:rounded-none md:rounded-l-lg" src="@e.ImageUrl" alt="">
+        <div class="p-4 leading-normal h-full flex flex-row">
+            <div class="max-w-[20rem]">
+                <h5 class="mb-3 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">@e.Title</h5>
+                <span class="flex gap-4 items-center mb-3 font-normal text-gray-700 dark:text-gray-400"
+                      style="text-overflow: ellipsis;">
+                    <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                         viewBox="0 0 17 21">
+                        <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                            <path d="M8 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                            <path d="M13.8 12.938h-.01a7 7 0 1 0-11.465.144h-.016l.141.17c.1.128.2.252.3.372L8 20l5.13-6.248c.193-.209.373-.429.54-.66l.13-.154Z" />
+                        </g>
+                    </svg>
+                    <p class="text-lg" style="width: 20rem; text-overflow: ellipsis; white-space: nowrap; overflow:hidden;">
+                        @e.Location.ToString()
+                    </p>
+                </span>
+                <span class="flex gap-4 items-center font-normal text-gray-700 dark:text-gray-400">
+                    <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                         viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                              stroke-width="1.5"
+                              d="M5 1v3m5-3v3m5-3v3M1 7h18M5 11h10M2 3h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
+                    </svg>
+                    <p class="text-lg" style="max-width: 20rem; text-overflow: ellipsis; white-space: nowrap; overflow:hidden;">
+                        @e.Start.ToString("dd MMM yyyy")
+                    </p>
+                </span>
+            </div>
+            <div class="flex-column">
+                <form asp-action="Edit" asp-controller="Event">
+                    <input type="hidden" name="eventId" value="@e.Id" />
+                    <button type="submit" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+                        <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 21">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7.418 17.861 1 20l2.139-6.418m4.279 4.279 10.7-10.7a3.027 3.027 0 0 0-2.14-5.165c-.802 0-1.571.319-2.139.886l-10.7 10.7m4.279 4.279-4.279-4.279m2.139 2.14 7.844-7.844m-1.426-2.853 4.279 4.279" />
+                        </svg>
+                    </button>
+                </form>
+                <form asp-action="Delete" asp-controller="Event" asp-route-eventId="@e.Id" method="post">
+                    <input type="hidden" name="eventId" value="@e.Id" />
+                    <button type="submit" class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-500 dark:focus:ring-red-800">
+                        <svg class="w-6 h-46" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </a>
+}

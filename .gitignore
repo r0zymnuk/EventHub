@@ -365,3 +365,4 @@ FodyWeavers.xsd
 
 # User images folder in EventHub.WebUI/wwwroot/images
 **/wwwroot/images/users
+/.vscode

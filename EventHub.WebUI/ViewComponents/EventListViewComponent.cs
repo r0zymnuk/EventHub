@@ -1,4 +1,5 @@
 ﻿using EventHub.Application.Dtos;
+using EventHub.Application.Dtos.Response.Event;
 using EventHub.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,4 +20,9 @@ public class EventListViewComponent : ViewComponent
             .GetEventsAsync(filters, take, skip);
         return View(events.ToList());
     }
+
+    //public async Task<IViewComponentResult> InvokeAsync(List<EventCardModel> events)
+    //{
+    //    return await Task.Run(() => View(events));
+    //}
 }

@@ -11,5 +11,6 @@ public record UpdateUserModel(
     [MaxLength(15)]
     string? PhoneNumber,
     Gender Gender,
+    int Age,
     string? ImageUrl
 );
