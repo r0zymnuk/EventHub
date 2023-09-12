@@ -210,7 +210,7 @@ public class EventService : IEventService
         return eventCards;
     }
 
-    public Task<Event> UpdateEventAsync(Guid eventId, Event @event)
+    public Task<Event> UpdateEventAsync(Guid eventId, EditEventModel @event)
     {
         throw new NotImplementedException();
     }

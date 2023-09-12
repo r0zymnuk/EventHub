@@ -8,6 +8,6 @@ public interface IEventService
     Task<List<EventCardModel>> GetEventsAsync(EventFilters? filters = null, int take = 12, int skip = 0);
     Task<EventModel?> GetEventByIdAsync(Guid eventId);
     Task<Event> CreateEventAsync(CreateEventModel @event);
-    Task<Event> UpdateEventAsync(Guid eventId, Event @event);
+    Task<Event> UpdateEventAsync(Guid eventId, EditEventModel @event);
     Task<Event> DeleteEventAsync(Guid eventId);
 }
