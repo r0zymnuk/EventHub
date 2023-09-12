@@ -64,28 +64,6 @@ public class EventController : Controller
         return RedirectToAction("AllEvents");
     }
 
-    [Route("edit/{eventId:guid}")]
-    [Authorize]
-    public async Task<IActionResult> Edit(Guid eventId, EditEventModel editEvent)
-    {
-        if (Request.Method == "POST")
-        {
-            await _eventService.UpdateEventAsync(eventId, editEvent);
-            return RedirectToAction("AllEvents");
-        }
-
-        var @event = await _eventService.GetEventByIdAsync(eventId);
-        if (@event == null)
-        {
-            return NotFound($"Event with id {eventId} not found.");
-        }
-
-        var categories = await _categoryService.GetCategoriesAsync();
-        ViewBag.Categories = categories;
-
-        return View(@event);
-    }
-
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
