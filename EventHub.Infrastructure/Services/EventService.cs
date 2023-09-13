@@ -102,7 +102,7 @@ public class EventService : IEventService
     public async Task<List<EventCardModel>> GetEventsAsync(EventFilters? filters = null, int take = 12, int skip = 0)
     {
         var events = _context.Events
-            .Where(e => e.Start >= DateTime.Now && !e.IsPrivate);
+            .Where(e => e.Start >= DateTime.Now.AddHours(-DateTime.Now.Hour) && !e.IsPrivate);
 
         if (filters is not null)
         {
@@ -210,7 +210,7 @@ public class EventService : IEventService
         return eventCards;
     }
 
-    public Task<Event> UpdateEventAsync(Guid eventId, EditEventModel @event)
+    public Task<Event> UpdateEventAsync(Guid eventId, Event @event)
     {
         throw new NotImplementedException();
     }
