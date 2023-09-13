@@ -12,9 +12,9 @@ public class AutoMapper : Profile
     {
         CreateMap<Event, GetEventDto>();
         CreateMap<Event, EventModel>()
-        .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => GetImageUrl(src.ImageUrl)));
+            .ConvertUsing(src => GetEventModel(src));
         CreateMap<Event, EventCardModel>()
-        .ConvertUsing(src => CardFromEvent(src));
+            .ConvertUsing(src => CardFromEvent(src));
         CreateMap<RegisterUserModel, User>();
         CreateMap<User, UserViewModel>();
     }
@@ -32,8 +32,32 @@ public class AutoMapper : Profile
         );
     }
 
+    public static EventModel GetEventModel(Event @event)
+    {
+        var imageUrl = GetImageUrl(@event.ImageUrl);
+        return new EventModel(
+            @event.Id,
+            @event.Title,
+            @event.Description,
+            @event.Location,
+            @event.Start,
+            @event.End,
+            imageUrl,
+            @event.Categories.ToList(),
+            @event.Tickets.ToList(),
+            @event.Status,
+            @event.Format,
+            @event.AgeRestriction,
+            @event.Capacity,
+            @event.Registered,
+            @event.Currency,
+            @event.RegistrationStart,
+            @event.RegistrationEnd
+        );
+    }
+
     public static string GetImageUrl(string imageUrl)
     {
-        return string.IsNullOrWhiteSpace(imageUrl) ? "https://via.placeholder.com/600x400?text=No%20Image" : (imageUrl.Contains(':') ? imageUrl : $"/image/get/{imageUrl}");
+        return string.IsNullOrWhiteSpace(imageUrl) ? "https://via.placeholder.com/600x400?text=No%20Image" : (imageUrl.Contains('/') ? imageUrl : $"/image/get/{imageUrl}");
     }
 }
