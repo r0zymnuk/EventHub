@@ -82,7 +82,7 @@ public class Callback : PageModel
                     Email = externalUser.FindFirst(ClaimTypes.Email)?.Value,
                     FirstName = externalUser.FindFirst(ClaimTypes.GivenName)?.Value,
                     LastName = externalUser.FindFirst(ClaimTypes.Surname)?.Value,
-                    UserName = externalUser.FindFirst(ClaimTypes.GivenName)?.Value + externalUser.FindFirst(ClaimTypes.Surname)?.Value + Guid.NewGuid().ToString().Substring(0, 4)
+                    UserName = externalUser.FindFirst(ClaimTypes.GivenName)?.Value + externalUser.FindFirst(ClaimTypes.Surname)?.Value + Guid.NewGuid().ToString()[..4]
                 };
                 await _userManager.CreateAsync(user);
             }
@@ -132,7 +132,9 @@ public class Callback : PageModel
 
     // if the external login is OIDC-based, there are certain things we need to preserve to make logout work
     // this will be different for WS-Fed, SAML2p or other protocols
+#pragma warning disable CA1822 // Mark members as static
     private void CaptureExternalLoginContext(AuthenticateResult externalResult, List<Claim> localClaims, AuthenticationProperties localSignInProps)
+#pragma warning restore CA1822 // Mark members as static
     {
         // if the external system sent a session id claim, copy it over
         // so we can use it for single sign-out

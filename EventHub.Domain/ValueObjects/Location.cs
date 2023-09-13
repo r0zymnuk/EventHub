@@ -1,4 +1,6 @@
-﻿namespace EventHub.Domain.ValueObjects;
+﻿using System.Globalization;
+
+namespace EventHub.Domain.ValueObjects;
 
 public class Location
 {
@@ -13,6 +15,14 @@ public class Location
     public Location(string country, string city)
     {
         Country = country;
+        foreach (CultureInfo culture in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
+        {
+            RegionInfo region = new(culture.Name);
+            if (string.Compare(region.EnglishName, country, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                CountryCode = region.TwoLetterISORegionName;
+            }
+        }
         City = city;
     }
 
