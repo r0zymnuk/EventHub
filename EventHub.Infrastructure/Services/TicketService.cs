@@ -7,15 +7,19 @@ public class TicketService : ITicketService
     private readonly ApplicationDbContext _context;
 
     private readonly IAccountService _accountService;
+    private readonly IEmailService _emailService;
 
     //private readonly IMapper mapper;
     public TicketService(
         ApplicationDbContext context,
         //IMapper mapper,
-        IAccountService accountService)
+        IAccountService accountService,
+        IEmailService emailService)
     {
         _context = context;
         _accountService = accountService;
+        //_mapper = mapper;
+        _emailService = emailService;
     }
 
     public Task<Event> CancelTicketAsync(Guid eventId, Guid ticketId, int quantity)
@@ -64,6 +68,8 @@ public class TicketService : ITicketService
             user.EnteredEvents.Add(@event);
 
         await _context.SaveChangesAsync();
+
+        await _emailService.SendEmailAsync(user.Email, "Ticket purchase", $"You have successfully purchased {quantity} ticket(s) for event {@event.Title}");
 
         return result with { Success = true, Message = "Ticket purchased successfully" };
     }

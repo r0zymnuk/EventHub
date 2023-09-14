@@ -12,7 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(
     builder.Configuration.GetConnectionString("DefaultConnection")!,
-    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "users"));
+    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "users"),
+    builder.Configuration.GetSection("SmtpSettings").Get<SmtpSettings>()!);
 builder.Services.AddScoped<MessageActionFilter>();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");

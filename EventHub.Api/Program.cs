@@ -8,7 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(
     builder.Configuration.GetConnectionString("DefaultConnection")!,
-    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images"));
+    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images"),
+    builder.Configuration.GetSection("SmtpSettings").Get<SmtpSettings>()!);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
