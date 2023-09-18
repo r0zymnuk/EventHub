@@ -1,5 +1,6 @@
 ﻿using EventHub.Application.Dtos.Response.Tickets;
 using Microsoft.EntityFrameworkCore;
+using QRCoder;
 
 namespace EventHub.Infrastructure.Services;
 public class TicketService : ITicketService
@@ -27,14 +28,59 @@ public class TicketService : ITicketService
         throw new NotImplementedException();
     }
 
-    public Task<Ticket> GetTicketAsync(Guid eventId, Guid ticketId)
+    public async Task<TicketViewModel> GetTicketAsync(Guid ticketId)
     {
-        throw new NotImplementedException();
+        var @event = await _context.Events
+            .Include(e => e.Tickets)
+            .FirstOrDefaultAsync(e => e.Tickets.Any(t => t.Id == ticketId));
+
+        if (@event == null)
+            return null!;
+
+        var ticket = @event.Tickets.FirstOrDefault(t => t.Id == ticketId);
+        if (ticket == null)
+            return null!;
+
+        return new TicketViewModel
+        (
+            ticket.Id,
+            ticket.Name,
+            ticket.Description,
+            ticket.Price,
+            ticket.Quantity,
+            ticket.Features.Select(f => f.Name).ToList(),
+            @event.Id,
+            @event.Title
+        );
     }
 
-    public Task<IQueryable<Ticket>> GetTicketsAsync(Guid eventId)
+    public async Task<List<Ticket>> GetTicketsAsync(Guid eventId)
     {
-        throw new NotImplementedException();
+        var @event = await _context.Events
+            .Include(e => e.Tickets)
+            .FirstOrDefaultAsync(e => e.Id == eventId);
+
+        if (@event == null)
+            return new List<Ticket>();
+
+        return @event.Tickets.ToList();
+    }
+
+    public async Task<bool> UseTicketAsync(Guid ticketId)
+    {
+        var userId = _accountService.GetUserId();
+        var user = await _context.Users.AsNoTracking()
+            .Include(u => u.Tickets).AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null)
+            return false;
+
+        var ticket = user.Tickets.FirstOrDefault(t => t.Id == ticketId);
+        if (ticket == null)
+            return false;
+
+        return true;
     }
 
     public async Task<TicketPurchaseResult> PurchaseTicketAsync(Guid eventId, Guid ticketId, int quantity)
@@ -69,7 +115,10 @@ public class TicketService : ITicketService
 
         await _context.SaveChangesAsync();
 
-        await _emailService.SendEmailAsync(user.Email, "Ticket purchase", $"You have successfully purchased {quantity} ticket(s) for event {@event.Title}");
+        // var qrGenerator = new QRCodeGenerator();
+
+        string emailContent = $"You have successfully purchased {quantity} ticket(s) for event {@event.Title}";
+        await _emailService.SendEmailAsync(user.Email!, "Ticket purchase", emailContent);
 
         return result with { Success = true, Message = "Ticket purchased successfully" };
     }
